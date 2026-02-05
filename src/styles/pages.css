@@ -1417,3 +1417,367 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* 首页棋盘演示区域 */
+.demo-section {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--box-shadow);
+}
+
+.demo-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-lg);
+}
+
+@media (min-width: 1024px) {
+  .demo-container {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.demo-board {
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.demo-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.demo-info h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-sm);
+}
+
+.demo-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.demo-info li {
+  padding: var(--spacing-xs) 0;
+  color: var(--text-light);
+  position: relative;
+  padding-left: var(--spacing-lg);
+}
+
+.demo-info li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+/* ========================================
+   新分析页面样式
+   ======================================== */
+
+/* 游戏选择 */
+.game-selection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  flex-wrap: wrap;
+}
+
+.selection-label {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.game-select {
+  flex: 1;
+  min-width: 300px;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  font-size: 1rem;
+}
+
+.analysis-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* 分析进度 */
+.analysis-progress {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--box-shadow);
+  margin-bottom: var(--spacing-lg);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.progress-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+}
+
+.progress-percent {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+}
+
+.progress-bar-container {
+  height: 12px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: var(--spacing-sm);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+  transition: width 0.3s ease;
+}
+
+.progress-status {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* 主内容区 */
+.analysis-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 1200px) {
+  .analysis-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 棋盘区域 */
+.analysis-board-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.chessboard-container {
+  position: relative;
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--box-shadow);
+}
+
+/* 导航控制 */
+.analysis-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.nav-controls {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.nav-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: var(--secondary-color);
+  color: white;
+  border-color: var(--secondary-color);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.review-modes {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.mode-btn {
+  flex: 1;
+  padding: var(--spacing-xs);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn.active {
+  background: var(--secondary-color);
+  color: white;
+  border-color: var(--secondary-color);
+}
+
+.orientation-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.orientation-btn:hover {
+  background: #f8f9fa;
+  border-color: var(--secondary-color);
+}
+
+/* 分析面板区域 */
+.analysis-panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* 走法列表 */
+.moves-list-in-analysis {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  box-shadow: var(--box-shadow);
+  max-height: 400px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-title {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: 1rem;
+  color: var(--primary-color);
+}
+
+.moves-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--spacing-xs);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.move-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  background: #f8f9fa;
+  border: 1px solid var(--border-color);
+  border-left-width: 3px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.move-chip:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.move-chip.selected {
+  background: rgba(52, 152, 219, 0.1);
+  border-color: var(--secondary-color);
+}
+
+.move-number-text {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.move-san-text {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.critical-star {
+  font-size: 0.8rem;
+}
+
+/* 分析报告区域 */
+.analysis-report-section {
+  grid-column: 1 / -1;
+}
+
+/* 空状态 */
+.empty-analysis-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl) 0;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.5;
+}
+
+.empty-analysis-state h3 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+.empty-analysis-state p {
+  margin: 0;
+  color: var(--text-light);
+  max-width: 400px;
+}

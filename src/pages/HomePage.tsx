@@ -1,5 +1,5 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
+import ChessBoard from '../components/chess/ChessBoard'
 import '../styles/pages.css'
 
 const HomePage: React.FC = () => {
@@ -91,6 +91,37 @@ const HomePage: React.FC = () => {
               </Link>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* 棋盘演示区域 */}
+      <div className="demo-section">
+        <h3 className="section-title">立即体验</h3>
+        <p className="section-subtitle">尝试我们的专业国际象棋棋盘</p>
+
+        <div className="demo-container">
+          <div className="demo-board">
+            <ChessBoard
+              initialFen="start"
+              timeControl="10+5"
+              orientation="white"
+              showCoordinates={true}
+              enableAnimation={true}
+            />
+          </div>
+          <div className="demo-info">
+            <h4>专业级棋盘功能</h4>
+            <ul>
+              <li>拖放走子，流畅体验</li>
+              <li>合法走法自动验证</li>
+              <li>走子动画效果</li>
+              <li>标准代数记谱法</li>
+              <li>响应式设计，适配所有设备</li>
+            </ul>
+            <Link to="/chess-demo" className="btn btn-primary">
+              进入完整对弈模式
+            </Link>
+          </div>
         </div>
       </div>
 
