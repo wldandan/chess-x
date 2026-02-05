@@ -1781,3 +1781,579 @@
   color: var(--text-light);
   max-width: 400px;
 }
+
+/* ========================================
+   战术训练页面样式
+   ======================================== */
+
+/* 战术训练页面 */
+.tactics-training-page {
+  padding-bottom: var(--spacing-xl);
+}
+
+/* 进度概览 */
+.training-progress-overview {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  flex-wrap: wrap;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.progress-value {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* 战术内容区 */
+.tactics-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 1200px) {
+  .tactics-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 棋盘区域 */
+.tactics-board-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.puzzle-board-container {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--box-shadow);
+}
+
+.puzzle-board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.puzzle-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.puzzle-type-icon {
+  font-size: 1.5rem;
+}
+
+.puzzle-type {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.puzzle-difficulty {
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.05);
+}
+
+.puzzle-progress {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.puzzle-board-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.puzzle-board-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+}
+
+.placeholder-content {
+  text-align: center;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+/* 控制面板区域 */
+.tactics-panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* 战术面板 */
+.tactic-panel {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--box-shadow);
+}
+
+.panel-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.panel-placeholder h3 {
+  margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+  font-size: 1.5rem;
+}
+
+.panel-placeholder p {
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-light);
+}
+
+/* 战术信息 */
+.tactic-info {
+  margin-bottom: var(--spacing-md);
+}
+
+.tactic-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.tactic-title-group {
+  flex: 1;
+}
+
+.tactic-title {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+.tactic-theme {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: #f8f9fa;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* 反馈消息 */
+.feedback-message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-md);
+}
+
+.feedback-correct {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.feedback-wrong {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.feedback-complete {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.feedback-hint {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.feedback-icon {
+  font-size: 1.2rem;
+}
+
+/* 进度统计 */
+.tactic-progress {
+  margin-bottom: var(--spacing-md);
+}
+
+.progress-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-item .stat-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.stat-item .stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.stat-item .stat-value.correct {
+  color: #22c55e;
+}
+
+.stat-item .stat-value.wrong {
+  color: #ef4444;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* 控制按钮 */
+.tactic-controls {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.control-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+  background: #f8f9fa;
+  border-color: var(--secondary-color);
+}
+
+.hint-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+.reset-btn:hover {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: #f59e0b;
+}
+
+.skip-btn:hover {
+  background: rgba(107, 114, 128, 0.1);
+  border-color: #6b7280;
+}
+
+.solution-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+.btn-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* 完成消息 */
+.completion-message {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-sm);
+}
+
+.completion-message.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.completion-message.failed {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.completion-icon {
+  font-size: 1.5rem;
+}
+
+.completion-text {
+  font-weight: 600;
+}
+
+/* 解答区域 */
+.solution-section {
+  padding: var(--spacing-md);
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-md);
+}
+
+.solution-title {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 0.9rem;
+  color: var(--primary-color);
+}
+
+.solution-moves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+}
+
+.solution-move {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: white;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.solution-explanation {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+/* 会话控制 */
+.session-controls {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* 会话统计 */
+.session-stats {
+  margin-top: var(--spacing-md);
+}
+
+.stats-title {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 0.9rem;
+  color: var(--primary-color);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.stat-card {
+  padding: var(--spacing-sm);
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  text-align: center;
+}
+
+.stat-card .stat-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  margin-bottom: 2px;
+}
+
+.stat-card .stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* 训练入口 */
+.tactics-entry {
+  margin-bottom: var(--spacing-xl);
+}
+
+.entry-card {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xl);
+  box-shadow: var(--box-shadow);
+}
+
+.entry-card.featured {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.entry-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.entry-icon {
+  font-size: 3rem;
+}
+
+.entry-info h3 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: 1.5rem;
+}
+
+.entry-info p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.entry-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.feature-icon {
+  font-size: 1.2rem;
+}
+
+.feature-text {
+  flex: 1;
+}
+
+/* 战术展示 */
+.tactics-showcase {
+  margin-bottom: var(--spacing-xl);
+}
+
+.tactics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.tactic-type-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.tactic-type-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.tactic-type-icon {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.tactic-type-name {
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  color: var(--primary-color);
+}
+
+.tactic-type-stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.tactic-type-stats .stat {
+  padding: 2px 6px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+/* 解答覆盖层 */
+.solution-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.solution-content {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xl);
+  max-width: 500px;
+  text-align: center;
+}
+
+.solution-content h3 {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--primary-color);
+}
+
+.solution-content .solution-moves {
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+}

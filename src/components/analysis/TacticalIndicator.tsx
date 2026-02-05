@@ -165,23 +165,21 @@ export const TacticalIndicator: React.FC<TacticalIndicatorProps> = ({
                   )}
 
                   {/* 连接线（从第一个格子到其他格子） */}
-                  {!isPrimary && tactic.squares.length > 1 && {
+                  {!isPrimary && tactic.squares.length > 1 && (() => {
                     const firstPos = getSquarePosition(tactic.squares[0]);
-                    const currentPos = pos;
-
                     return (
                       <line
                         x1={firstPos.x + squareSize / 2}
                         y1={firstPos.y + squareSize / 2}
-                        x2={currentPos.x + squareSize / 2}
-                        y2={currentPos.y + squareSize / 2}
+                        x2={pos.x + squareSize / 2}
+                        y2={pos.y + squareSize / 2}
                         stroke={color}
                         strokeWidth={2}
                         strokeDasharray="5,5"
                         opacity={0.6}
                       />
                     );
-                  }}
+                  })()}
                 </g>
               );
             })}
