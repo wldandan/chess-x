@@ -1104,3 +1104,1101 @@
     gap: var(--spacing-xs);
   }
 }
+
+/* ========================================
+   走法分析面板样式 (MoveAnalysisPanel)
+   ======================================== */
+
+.move-analysis-panel {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--box-shadow);
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.analysis-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--text-light);
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}
+
+.analysis-placeholder h3 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.analysis-placeholder p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* 走法信息头部 */
+.analysis-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.move-number-badge {
+  background: var(--primary-color);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  min-width: 50px;
+  text-align: center;
+}
+
+.move-san {
+  font-family: 'Courier New', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  flex: 1;
+}
+
+.quality-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.quality-symbol {
+  font-weight: 700;
+}
+
+/* 评分区域 */
+.score-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.score-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.score-bar-item {
+  display: grid;
+  grid-template-columns: 60px 1fr 50px;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.score-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.score-bar-track {
+  position: relative;
+  height: 16px;
+  background: linear-gradient(90deg, #2c3e50, #bdc3c7, #e74c3c);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  transition: width 0.3s ease;
+}
+
+.score-marker {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  transform: translateX(-50%);
+}
+
+.score-value {
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.score-change {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.change-label {
+  color: var(--text-light);
+}
+
+.change-value {
+  font-weight: 700;
+}
+
+/* 最佳走法 */
+.best-move-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.best-move-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: #f0fdf4;
+  border: 1px solid #22c55e;
+  border-radius: var(--border-radius);
+}
+
+.best-move-san {
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.best-move-score {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+/* 替代走法 */
+.alternatives-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.alternatives-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.alternative-card {
+  padding: var(--spacing-sm);
+  background: #f8f9fa;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+}
+
+.alternative-move {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.best-badge {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+.alternative-san {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.alternative-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
+}
+
+.alternative-quality {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.alternative-score {
+  font-weight: 700;
+}
+
+.alternative-explanation {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+/* 战术机会 */
+.tactics-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.tactics-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.tactic-card {
+  padding: var(--spacing-sm);
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  border-radius: var(--border-radius);
+}
+
+.tactic-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.tactic-name {
+  font-weight: 600;
+}
+
+.tactic-winning {
+  background: #ef4444;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.tactic-strength {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.tactic-description {
+  font-size: 0.85rem;
+  color: var(--text-color);
+  margin-bottom: var(--spacing-xs);
+}
+
+.tactic-squares {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-family: 'Courier New', monospace;
+}
+
+/* 错过的战术 */
+.missed-tactics-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.missed-tactics-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.missed-tactic-card {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--border-radius);
+}
+
+.missed-icon {
+  font-size: 1.2rem;
+}
+
+.missed-tactic-content {
+  flex: 1;
+}
+
+.missed-tactic-name {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.missed-tactic-desc {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+/* 关键决策点徽章 */
+.critical-badge {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.critical-icon {
+  animation: sparkle 1s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* 时间信息 */
+.time-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  font-size: 0.85rem;
+}
+
+.time-label {
+  color: var(--text-light);
+}
+
+.time-value {
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+/* ========================================
+   对局报告卡片样式 (GameReportCard)
+   ======================================== */
+
+.game-report-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--box-shadow);
+  border: 1px solid var(--border-color);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.report-title h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--text-color);
+}
+
+.report-date {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: var(--spacing-xs);
+  display: block;
+}
+
+.report-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.report-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.report-section-title {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* 总体准确率 */
+.accuracy-overview {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+}
+
+.accuracy-main {
+  flex-shrink: 0;
+}
+
+.accuracy-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  position: relative;
+  padding: 8px;
+}
+
+.accuracy-inner {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.accuracy-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.accuracy-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.accuracy-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.accuracy-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.accuracy-label-white,
+.accuracy-label-black {
+  min-width: 40px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.accuracy-label-white {
+  color: #2c3e50;
+}
+
+.accuracy-label-black {
+  color: #7f8c8d;
+}
+
+.accuracy-bar {
+  flex: 1;
+  height: 12px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.accuracy-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.accuracy-percent {
+  min-width: 50px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* 质量分布 */
+.quality-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.quality-bar-container {
+  margin-bottom: var(--spacing-xs);
+}
+
+.quality-bar {
+  height: 24px;
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+.quality-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.quality-best {
+  background-color: #22c55e;
+}
+
+.quality-good {
+  background-color: #3b82f6;
+}
+
+.quality-error {
+  background-color: #ef4444;
+}
+
+.quality-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.85rem;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-text {
+  color: var(--text-light);
+}
+
+.quality-stats {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.stat-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.stat-badge.best {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.stat-badge.good {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.stat-badge.error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.stat-icon {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.stat-label {
+  color: var(--text-light);
+}
+
+.stat-value {
+  font-weight: 700;
+}
+
+/* 开局分析 */
+.opening-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.opening-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.opening-eco {
+  background: var(--primary-color);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.opening-name {
+  font-weight: 600;
+}
+
+.opening-variation {
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.opening-accuracy {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+}
+
+.opening-accuracy-label {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.opening-accuracy-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.opening-deviation {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: var(--border-radius);
+  font-size: 0.85rem;
+}
+
+.deviation-icon {
+  font-size: 1rem;
+}
+
+.deviation-text {
+  color: #92400e;
+}
+
+/* 战术统计 */
+.tactics-summary {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.tactic-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  flex: 1;
+  min-width: 120px;
+}
+
+.tactic-stat.found {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid #86efac;
+}
+
+.tactic-stat.missed {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #fca5a5;
+}
+
+.tactic-icon {
+  font-size: 1.2rem;
+}
+
+.tactic-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  flex: 1;
+}
+
+.tactic-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.tactic-rate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  min-width: 80px;
+}
+
+.rate-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.rate-value {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+/* 时间管理 */
+.time-management {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.time-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+}
+
+.time-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.time-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* 分析总结 */
+.analysis-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.summary-block {
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+}
+
+.summary-block.strengths {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid #86efac;
+}
+
+.summary-block.weaknesses {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #fca5a5;
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+}
+
+.summary-icon {
+  font-size: 1rem;
+}
+
+.summary-title {
+  font-size: 0.95rem;
+}
+
+.summary-list {
+  margin: 0;
+  padding-left: var(--spacing-lg);
+}
+
+.summary-item {
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.9rem;
+}
+
+.summary-item:last-child {
+  margin-bottom: 0;
+}
+
+/* 改进建议 */
+.recommendations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.recommendation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: #f0f9ff;
+  border-left: 3px solid #0ea5e9;
+  border-radius: var(--border-radius);
+}
+
+.recommendation-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #0ea5e9;
+  color: white;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.recommendation-text {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+/* 关键时刻 */
+.critical-moments {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.critical-moment {
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  border-left: 3px solid #f59e0b;
+}
+
+.critical-moment.impact-high {
+  background: rgba(239, 68, 68, 0.1);
+  border-left-color: #ef4444;
+}
+
+.critical-moment.impact-medium {
+  background: rgba(245, 158, 11, 0.1);
+  border-left-color: #f59e0b;
+}
+
+.critical-moment.impact-low {
+  background: rgba(59, 130, 246, 0.1);
+  border-left-color: #3b82f6;
+}
+
+.moment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+}
+
+.moment-move {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.moment-type {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.moment-type.type-brilliant_move {
+  background: rgba(34, 197, 94, 0.2);
+  color: #16a34a;
+}
+
+.moment-type.type-critical_error {
+  background: rgba(239, 68, 68, 0.2);
+  color: #dc2626;
+}
+
+.moment-type.type-turning_point {
+  background: rgba(245, 158, 11, 0.2);
+  color: #d97706;
+}
+
+.moment-type.type-missed_win {
+  background: rgba(139, 92, 246, 0.2);
+  color: #9333ea;
+}
+
+.moment-description {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.moment-impact {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.85rem;
+}
+
+.impact-label {
+  color: var(--text-light);
+}
+
+.impact-score {
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+/* 报告页脚 */
+.report-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  margin-top: var(--spacing-lg);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.report-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.8rem;
+}
+
+.meta-label {
+  color: var(--text-light);
+}
+
+.meta-value {
+  font-weight: 600;
+}
+
+/* ========================================
+   战术指示器样式 (TacticalIndicator)
+   ======================================== */
+
+.tactical-indicator-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.tactic-group {
+  transition: opacity 0.2s ease;
+}
+
+.tactic-group:hover {
+  opacity: 0.8;
+}
+
+.tactic-square rect {
+  transition: all 0.2s ease;
+}
+
+.tactic-square rect:hover {
+  opacity: 0.6;
+}
+
+.tactic-label {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 战术图例 */
+.tactical-legend {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--box-shadow);
+}
+
+.legend-title {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.legend-tactic-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.legend-tactic-item:hover {
+  background: #f8f9fa;
+}
+
+.legend-tactic-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legend-tactic-name {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.legend-tactic-count {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  min-width: 20px;
+  text-align: right;
+}
+
+.legend-tactic-winning {
+  background: #ef4444;
+  color: white;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}

@@ -1,63 +1,109 @@
-import React from 'react'
-import '../styles/pages.css'
+// 对局分析页面 - 支持完整对局分析和复盘
+import React, { useEffect, useState } from 'react';
+import { Chess } from 'chess.js';
+import { Chessboard } from 'react-chessboard';
+import {
+  useAnalysisStore,
+  useCurrentReport,
+  useAnalyzedMoves,
+  useCurrentAnalyzedMove,
+  useAnalysisProgress,
+  useReviewState,
+} from '../stores/analysis.store';
+import { useGameStore, useGameHistory } from '../stores/game.store';
+import MoveAnalysisPanel from '../components/analysis/MoveAnalysisPanel';
+import GameReportCard from '../components/analysis/GameReportCard';
+import { TacticalIndicator, TacticalLegend } from '../components/analysis/TacticalIndicator';
+import type { ReviewMode } from '../types/analysis.types';
+import '../styles/pages.css';
 
 const AnalysisPage: React.FC = () => {
-  const recentGames = [
-    {
-      id: 1,
-      opponent: 'AI-卡尔森',
-      result: '胜',
-      date: '2025-03-15',
-      duration: '25:30',
-      accuracy: 78,
-      bestMoves: 65,
-      mistakes: 2
-    },
-    {
-      id: 2,
-      opponent: 'AI-卡斯帕罗夫',
-      result: '负',
-      date: '2025-03-14',
-      duration: '18:45',
-      accuracy: 62,
-      bestMoves: 45,
-      mistakes: 5
-    },
-    {
-      id: 3,
-      opponent: 'AI-卡鲁阿纳',
-      result: '和',
-      date: '2025-03-13',
-      duration: '32:10',
-      accuracy: 71,
-      bestMoves: 58,
-      mistakes: 3
-    },
-    {
-      id: 4,
-      opponent: 'AI-丁立人',
-      result: '胜',
-      date: '2025-03-12',
-      duration: '28:20',
-      accuracy: 82,
-      bestMoves: 70,
-      mistakes: 1
+  // 状态
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
+  const [showReport, setShowReport] = useState(false);
+
+  // Stores
+  const gameHistory = useGameHistory();
+  const currentReport = useCurrentReport();
+  const analyzedMoves = useAnalyzedMoves();
+  const currentAnalyzedMove = useCurrentAnalyzedMove();
+  const progress = useAnalysisProgress();
+  const review = useReviewState();
+
+  // Store actions
+  const { loadGame, startAnalysis, cancelAnalysis, clearAnalysis, exportReport } = useAnalysisStore();
+  const { goToMove, nextMove, previousMove, goToStart, goToEnd, setReviewMode } = useAnalysisStore();
+
+  // 棋盘状态
+  const [chess] = useState(new Chess());
+  const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
+
+  // 初始化：如果有游戏历史，自动选择第一个进行分析
+  useEffect(() => {
+    if (gameHistory.length > 0 && !selectedGameId) {
+      handleSelectGame(gameHistory[0].id);
     }
-  ]
+  }, [gameHistory]);
 
-  const analysisStats = [
-    { label: '平均准确率', value: '73.2%', trend: '+5.4%', color: '#2ecc71' },
-    { label: '最佳走法率', value: '59.5%', trend: '+8.2%', color: '#3498db' },
-    { label: '平均错误数', value: '2.8', trend: '-1.2', color: '#e74c3c' },
-    { label: '战术识别率', value: '68.7%', trend: '+12.1%', color: '#9b59b6' }
-  ]
+  // 选择游戏
+  const handleSelectGame = async (gameId: string) => {
+    setSelectedGameId(gameId);
+    clearAnalysis();
+    setShowReport(false);
 
-  const weaknessAreas = [
-    { area: '中局计划制定', severity: '高', progress: 30 },
-    { area: '残局技术', severity: '中', progress: 45 },
-    { area: '时间管理', severity: '低', progress: 70 },
-    { area: '心理稳定性', severity: '中', progress: 55 }
-  ]
+    // 加载游戏
+    const game = gameHistory.find(g => g.id === gameId);
+    if (game) {
+      await loadGame(game);
+
+      // 重置棋盘到初始位置
+      chess.reset();
+    }
+  };
+
+  // 开始分析
+  const handleStartAnalysis = async () => {
+    const game = gameHistory.find(g => g.id === selectedGameId);
+    if (game) {
+      await startAnalysis(game, {
+        engine: 'mock',
+        depth: 15,
+        includeAlternatives: true,
+        alternativesCount: 3,
+        detectTactics: true,
+        includeOpening: true,
+        timeAnalysis: true,
+      });
+    }
+  };
+
+  // 取消分析
+  const handleCancelAnalysis = () => {
+    cancelAnalysis();
+  };
+
+  // 导航到指定步数
+  const handleGoToMove = (moveIndex: number) => {
+    goToMove(moveIndex);
+
+    const game = gameHistory.find(g => g.id === selectedGameId);
+    if (game && moveIndex >= 0) {
+      const move = game.moves[moveIndex];
+      if (move) {
+        chess.move(move.san);
+      }
+    } else if (moveIndex === -1) {
+      chess.reset();
+    }
+  };
+
+  // 棋盘走子（复盘模式下只查看，不允许走棋）
+  const onDrop = () => {
+    return false; // 不允许在分析模式下走棋
+  };
+
+  // 获取当前战术机会
+  const currentTactics = currentAnalyzedMove?.tacticalOpportunities || [];
 
   return (
     <div className="analysis-page">
@@ -68,196 +114,249 @@ const AnalysisPage: React.FC = () => {
         </p>
       </div>
 
-      <div className="analysis-overview">
-        <div className="overview-card">
-          <h3 className="overview-title">总体表现</h3>
-          <div className="overview-stats">
-            {analysisStats.map((stat, index) => (
-              <div key={index} className="overview-stat">
-                <div className="stat-label">{stat.label}</div>
-                <div className="stat-value" style={{ color: stat.color }}>
-                  {stat.value}
-                </div>
-                <div className={`stat-trend ${stat.trend.startsWith('+') ? 'positive' : 'negative'}`}>
-                  {stat.trend}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="recent-games">
-        <div className="section-header">
-          <h3 className="section-title">最近对局</h3>
-          <button className="btn btn-outline">查看全部</button>
-        </div>
-
-        <div className="games-table">
-          <table>
-            <thead>
-              <tr>
-                <th>对手</th>
-                <th>结果</th>
-                <th>日期</th>
-                <th>时长</th>
-                <th>准确率</th>
-                <th>最佳走法</th>
-                <th>错误</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentGames.map((game) => (
-                <tr key={game.id}>
-                  <td className="game-opponent">{game.opponent}</td>
-                  <td>
-                    <span className={`game-result result-${game.result}`}>
-                      {game.result}
-                    </span>
-                  </td>
-                  <td className="game-date">{game.date}</td>
-                  <td className="game-duration">{game.duration}</td>
-                  <td>
-                    <div className="accuracy-bar">
-                      <div
-                        className="accuracy-fill"
-                        style={{ width: `${game.accuracy}%` }}
-                      />
-                      <span className="accuracy-text">{game.accuracy}%</span>
-                    </div>
-                  </td>
-                  <td className="game-best-moves">{game.bestMoves}%</td>
-                  <td className="game-mistakes">{game.mistakes}</td>
-                  <td>
-                    <button className="btn btn-sm btn-primary">分析</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="weakness-analysis">
-        <h3 className="section-title">弱点分析</h3>
-        <div className="weakness-grid">
-          {weaknessAreas.map((weakness, index) => (
-            <div key={index} className="weakness-card">
-              <div className="weakness-header">
-                <h4 className="weakness-area">{weakness.area}</h4>
-                <span className={`weakness-severity severity-${weakness.severity}`}>
-                  {weakness.severity}
-                </span>
-              </div>
-              <p className="weakness-description">
-                需要加强{weakness.area.toLowerCase()}能力，建议进行专项训练
-              </p>
-              <div className="weakness-progress">
-                <div className="progress-info">
-                  <span className="progress-label">改进进度</span>
-                  <span className="progress-percent">{weakness.progress}%</span>
-                </div>
-                <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${weakness.progress}%` }}
-                  />
-                </div>
-              </div>
-              <div className="weakness-actions">
-                <button className="btn btn-sm btn-primary">专项训练</button>
-                <button className="btn btn-sm btn-outline">查看详情</button>
-              </div>
-            </div>
+      {/* 游戏选择 */}
+      <div className="game-selection">
+        <label className="selection-label">选择对局:</label>
+        <select
+          className="game-select"
+          value={selectedGameId || ''}
+          onChange={(e) => handleSelectGame(e.target.value)}
+          disabled={progress.isAnalyzing}
+        >
+          <option value="">-- 请选择 --</option>
+          {gameHistory.map((game) => (
+            <option key={game.id} value={game.id}>
+              {game.metadata?.white || 'White'} vs {game.metadata?.black || 'Black'}
+              {' '}({game.metadata?.date || game.metadata?.result || '*'})
+            </option>
           ))}
-        </div>
+        </select>
+
+        {selectedGameId && !review.isReady && !progress.isAnalyzing && (
+          <button className="btn btn-primary" onClick={handleStartAnalysis}>
+            开始分析
+          </button>
+        )}
+
+        {progress.isAnalyzing && (
+          <button className="btn btn-outline" onClick={handleCancelAnalysis}>
+            取消分析
+          </button>
+        )}
+
+        {review.isReady && (
+          <div className="analysis-actions">
+            <button
+              className={`btn ${showReport ? 'btn-outline' : 'btn-primary'}`}
+              onClick={() => setShowReport(false)}
+            >
+              逐步复盘
+            </button>
+            <button
+              className={`btn ${showReport ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setShowReport(true)}
+            >
+              查看报告
+            </button>
+            <button
+              className="btn btn-outline"
+              onClick={() => exportReport('json')}
+            >
+              导出
+            </button>
+          </div>
+        )}
       </div>
 
-      <div className="improvement-plan">
-        <div className="plan-card">
-          <div className="plan-header">
-            <h3 className="plan-title">改进计划建议</h3>
-            <span className="plan-period">2周计划</span>
+      {/* 分析进度 */}
+      {progress.isAnalyzing && (
+        <div className="analysis-progress">
+          <div className="progress-header">
+            <h3>正在分析...</h3>
+            <span className="progress-percent">{progress.percentComplete}%</span>
           </div>
-          <div className="plan-content">
-            <div className="plan-item">
-              <div className="plan-icon">🎯</div>
-              <div className="plan-details">
-                <h4 className="plan-item-title">每日战术训练</h4>
-                <p className="plan-item-description">
-                  每天30分钟战术组合训练，重点提升牵制和捉双识别能力
-                </p>
-              </div>
-              <div className="plan-duration">30分钟/天</div>
-            </div>
-            <div className="plan-item">
-              <div className="plan-icon">🤖</div>
-              <div className="plan-details">
-                <h4 className="plan-item-title">AI对弈分析</h4>
-                <p className="plan-item-description">
-                  每周2次与AI对弈，重点分析中局计划制定错误
-                </p>
-              </div>
-              <div className="plan-duration">1小时/次</div>
-            </div>
-            <div className="plan-item">
-              <div className="plan-icon">📚</div>
-              <div className="plan-details">
-                <h4 className="plan-item-title">残局学习</h4>
-                <p className="plan-item-description">
-                  学习基本残局技巧，重点掌握王兵残局和车兵残局
-                </p>
-              </div>
-              <div className="plan-duration">45分钟/天</div>
-            </div>
+          <div className="progress-bar-container">
+            <div
+              className="progress-bar-fill"
+              style={{ width: `${progress.percentComplete}%` }}
+            />
           </div>
-          <div className="plan-actions">
-            <button className="btn btn-primary">接受计划</button>
-            <button className="btn btn-outline">自定义计划</button>
+          <div className="progress-status">
+            {progress.stage === 'initializing' && '初始化分析引擎...'}
+            {progress.stage === 'analyzing' &&
+              `分析棋步: ${progress.currentMove}/${progress.totalMoves}`}
+            {progress.stage === 'generating_report' && '生成分析报告...'}
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="analysis-tools">
-        <h3 className="section-title">分析工具</h3>
-        <div className="tools-grid">
-          <div className="tool-card">
-            <div className="tool-icon">🔍</div>
-            <h4 className="tool-title">深度复盘</h4>
-            <p className="tool-description">
-              逐步分析对局，查看AI评分和替代走法
-            </p>
-            <button className="btn btn-outline">开始分析</button>
-          </div>
-          <div className="tool-card">
-            <div className="tool-icon">📊</div>
-            <h4 className="tool-title">统计报告</h4>
-            <p className="tool-description">
-              生成详细对局统计和进步趋势报告
-            </p>
-            <button className="btn btn-outline">生成报告</button>
-          </div>
-          <div className="tool-card">
-            <div className="tool-icon">🎯</div>
-            <h4 className="tool-title">弱点检测</h4>
-            <p className="tool-description">
-              自动识别技术弱点和改进建议
-            </p>
-            <button className="btn btn-outline">检测弱点</button>
-          </div>
-          <div className="tool-card">
-            <div className="tool-icon">📈</div>
-            <h4 className="tool-title">进步追踪</h4>
-            <p className="tool-description">
-              追踪ELO变化和各维度能力提升
-            </p>
-            <button className="btn btn-outline">查看进步</button>
-          </div>
+      {/* 主内容区 */}
+      {selectedGameId && review.isReady && (
+        <div className="analysis-content">
+          {!showReport ? (
+            <>
+              {/* 棋盘 + 分析面板 */}
+              <div className="analysis-board-section">
+                {/* 棋盘 */}
+                <div className="chessboard-container">
+                  <Chessboard
+                    position={chess.fen()}
+                    boardOrientation={boardOrientation}
+                    onPieceDrop={onDrop}
+                    customBoardStyle={{
+                      borderRadius: '4px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    }}
+                  />
+
+                  {/* 战术指示器覆盖层 */}
+                  {currentTactics.length > 0 && (
+                    <TacticalIndicator
+                      tactics={currentTactics}
+                      boardSize={600}
+                    />
+                  )}
+
+                  {/* 战术图例 */}
+                  {currentTactics.length > 0 && (
+                    <TacticalLegend tactics={currentTactics} />
+                  )}
+                </div>
+
+                {/* 导航控制 */}
+                <div className="analysis-navigation">
+                  <div className="nav-controls">
+                    <button
+                      className="nav-btn"
+                      onClick={goToStart}
+                      title="跳到开始"
+                    >
+                      ⏮
+                    </button>
+                    <button
+                      className="nav-btn"
+                      onClick={previousMove}
+                      disabled={review.currentMoveIndex < 0}
+                      title="上一步"
+                    >
+                      ◀
+                    </button>
+                    <button
+                      className="nav-btn"
+                      onClick={nextMove}
+                      disabled={review.currentMoveIndex >= analyzedMoves.length - 1}
+                      title="下一步"
+                    >
+                      ▶
+                    </button>
+                    <button
+                      className="nav-btn"
+                      onClick={goToEnd}
+                      title="跳到结束"
+                    >
+                      ⏭
+                    </button>
+                  </div>
+
+                  {/* 模式选择 */}
+                  <div className="review-modes">
+                    <button
+                      className={`mode-btn ${review.reviewMode === 'move_by_move' ? 'active' : ''}`}
+                      onClick={() => setReviewMode('move_by_move')}
+                    >
+                      逐步
+                    </button>
+                    <button
+                      className={`mode-btn ${review.reviewMode === 'mistakes_only' ? 'active' : ''}`}
+                      onClick={() => setReviewMode('mistakes_only')}
+                    >
+                      错误
+                    </button>
+                    <button
+                      className={`mode-btn ${review.reviewMode === 'critical_only' ? 'active' : ''}`}
+                      onClick={() => setReviewMode('critical_only')}
+                    >
+                      关键
+                    </button>
+                  </div>
+
+                  {/* 方向切换 */}
+                  <button
+                    className="orientation-btn"
+                    onClick={() => setBoardOrientation(boardOrientation === 'white' ? 'black' : 'white')}
+                  >
+                    {boardOrientation === 'white' ? '⚪' : '⚫'}
+                  </button>
+                </div>
+              </div>
+
+              {/* 走法分析面板 */}
+              <div className="analysis-panel-section">
+                <MoveAnalysisPanel
+                  analyzedMove={currentAnalyzedMove}
+                  moveIndex={review.currentMoveIndex}
+                  totalMoves={analyzedMoves.length}
+                />
+
+                {/* 走法列表 */}
+                <div className="moves-list-in-analysis">
+                  <h4 className="list-title">走法列表</h4>
+                  <div className="moves-grid">
+                    {analyzedMoves.map((move, index) => {
+                      const isSelected = index === review.currentMoveIndex;
+                      const qualityColors: Record<string, string> = {
+                        best: '#22c55e',
+                        great: '#3b82f6',
+                        good: '#6c757d',
+                        book: '#8b5cf6',
+                        inaccuracy: '#f59e0b',
+                        mistake: '#f97316',
+                        blunder: '#ef4444',
+                      };
+
+                      return (
+                        <button
+                          key={index}
+                          className={`move-chip ${isSelected ? 'selected' : ''}`}
+                          onClick={() => handleGoToMove(index)}
+                          style={{
+                            borderLeftColor: qualityColors[move.quality],
+                          }}
+                        >
+                          <span className="move-number-text">{Math.floor(index / 2) + 1}.</span>
+                          <span className="move-san-text">{move.move.san}</span>
+                          {move.isCritical && <span className="critical-star">⚡</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            /* 分析报告 */
+            <div className="analysis-report-section">
+              {currentReport && (
+                <GameReportCard
+                  report={currentReport}
+                  onExport={exportReport}
+                />
+              )}
+            </div>
+          )}
         </div>
-      </div>
+      )}
+
+      {/* 空状态 */}
+      {!selectedGameId && (
+        <div className="empty-analysis-state">
+          <div className="empty-icon">📊</div>
+          <h3>选择一个对局开始分析</h3>
+          <p>从您的对局历史中选择一个对局，AI将为您生成详细的分析报告</p>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default AnalysisPage
+export default AnalysisPage;
