@@ -1,6 +1,6 @@
 import React from 'react'
 
-export interface NotificationType = 'info' | 'success' | 'warning' | 'error'
+export type NotificationType = 'info' | 'success' | 'warning' | 'error'
 
 interface GameControlsProps {
   onUndo: () => void

@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import ChessBoard from '../components/chess/ChessBoard'
 import '../styles/pages.css'
 
 const HomePage: React.FC = () => {
@@ -36,7 +35,7 @@ const HomePage: React.FC = () => {
       title: '专业比赛界面',
       description: '类似Chess.com的专业棋盘，国际棋联标准记谱法',
       icon: '♟️',
-      path: '/training',
+      path: '/chess-demo',
       color: '#f39c12'
     },
     {
@@ -60,7 +59,7 @@ const HomePage: React.FC = () => {
             结合AI对弈、智能复盘和专业训练功能，帮助提升比赛竞争力
           </p>
           <div className="hero-actions">
-            <Link to="/training" className="btn btn-primary">
+            <Link to="/chess-demo" className="btn btn-primary">
               开始训练
             </Link>
             <Link to="/analysis" className="btn btn-secondary">
@@ -94,20 +93,33 @@ const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* 棋盘演示区域 */}
+      {/* 棋盘演示区域 - 暂时使用静态展示 */}
       <div className="demo-section">
         <h3 className="section-title">立即体验</h3>
         <p className="section-subtitle">尝试我们的专业国际象棋棋盘</p>
 
         <div className="demo-container">
           <div className="demo-board">
-            <ChessBoard
-              initialFen="start"
-              timeControl="10+5"
-              orientation="white"
-              showCoordinates={true}
-              enableAnimation={true}
-            />
+            <div style={{
+              background: '#f8f9fa',
+              borderRadius: '8px',
+              padding: '40px',
+              textAlign: 'center',
+              minHeight: '400px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>♟️</div>
+              <h3 style={{ color: '#2c3e50', marginBottom: '8px' }}>专业棋盘功能</h3>
+              <p style={{ color: '#666', marginBottom: '20px' }}>
+                拖放走子、合法走法验证、走子动画
+              </p>
+              <Link to="/chess-demo" className="btn btn-primary">
+                进入完整对弈模式
+              </Link>
+            </div>
           </div>
           <div className="demo-info">
             <h4>专业级棋盘功能</h4>
@@ -118,9 +130,6 @@ const HomePage: React.FC = () => {
               <li>标准代数记谱法</li>
               <li>响应式设计，适配所有设备</li>
             </ul>
-            <Link to="/chess-demo" className="btn btn-primary">
-              进入完整对弈模式
-            </Link>
           </div>
         </div>
       </div>
@@ -151,7 +160,7 @@ const HomePage: React.FC = () => {
         <p className="cta-description">
           加入数千名青少年棋手的行列，开始你的专业训练之旅
         </p>
-        <Link to="/training" className="btn btn-large btn-primary">
+        <Link to="/chess-demo" className="btn btn-large btn-primary">
           立即开始免费训练
         </Link>
       </div>
