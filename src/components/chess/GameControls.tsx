@@ -1,5 +1,7 @@
 import React from 'react'
 
+export interface NotificationType = 'info' | 'success' | 'warning' | 'error'
+
 interface GameControlsProps {
   onUndo: () => void
   onReset: () => void
@@ -9,6 +11,7 @@ interface GameControlsProps {
   canUndo: boolean
   isAnalyzing: boolean
   gameStatus: 'playing' | 'checkmate' | 'stalemate' | 'draw' | 'timeout'
+  onNotification?: (message: string, type?: NotificationType) => void
 }
 
 const GameControls: React.FC<GameControlsProps> = ({
@@ -19,9 +22,47 @@ const GameControls: React.FC<GameControlsProps> = ({
   onExportGame,
   canUndo,
   isAnalyzing,
-  gameStatus
+  gameStatus,
+  onNotification
 }) => {
   const isGameActive = gameStatus === 'playing'
+
+  // 使用通知函数替代 alert
+  const notify = React.useCallback((message: string, type: NotificationType = 'info') => {
+    if (onNotification) {
+      onNotification(message, type)
+    } else {
+      // 如果没有提供通知函数，使用 console
+      console.log(`[${type.toUpperCase()}] ${message}`)
+    }
+  }, [onNotification])
+
+  const handleOfferDraw = React.useCallback(() => {
+    notify('提和功能开发中...', 'info')
+  }, [notify])
+
+  const handleResign = React.useCallback(() => {
+    // 可以添加确认对话框
+    notify('认输功能开发中...', 'warning')
+  }, [notify])
+
+  const handleNewGame = React.useCallback(() => {
+    onReset()
+    notify('开始新对局！', 'success')
+  }, [onReset, notify])
+
+  const handleReview = React.useCallback(() => {
+    notify('复盘功能开发中...', 'info')
+  }, [notify])
+
+  const handleShare = React.useCallback(() => {
+    notify('分享功能开发中...', 'info')
+  }, [notify])
+
+  const handleSave = React.useCallback(() => {
+    onExportGame()
+    notify('对局已保存', 'success')
+  }, [onExportGame, notify])
 
   return (
     <div className="game-controls">
@@ -74,7 +115,7 @@ const GameControls: React.FC<GameControlsProps> = ({
             <>
               <button
                 className="control-btn draw-btn"
-                onClick={() => alert('提和功能开发中...')}
+                onClick={handleOfferDraw}
                 title="提和 (D)"
               >
                 <span className="control-icon">🤝</span>
@@ -83,11 +124,7 @@ const GameControls: React.FC<GameControlsProps> = ({
 
               <button
                 className="control-btn resign-btn"
-                onClick={() => {
-                  if (window.confirm('确定要认输吗？')) {
-                    alert('认输功能开发中...')
-                  }
-                }}
+                onClick={handleResign}
                 title="认输 (R)"
               >
                 <span className="control-icon">🏳️</span>
@@ -98,7 +135,7 @@ const GameControls: React.FC<GameControlsProps> = ({
             <>
               <button
                 className="control-btn newgame-btn"
-                onClick={onReset}
+                onClick={handleNewGame}
                 title="新对局 (N)"
               >
                 <span className="control-icon">🆕</span>
@@ -107,7 +144,7 @@ const GameControls: React.FC<GameControlsProps> = ({
 
               <button
                 className="control-btn review-btn"
-                onClick={() => alert('复盘功能开发中...')}
+                onClick={handleReview}
                 title="复盘学习"
               >
                 <span className="control-icon">📖</span>
@@ -118,7 +155,7 @@ const GameControls: React.FC<GameControlsProps> = ({
 
           <button
             className="control-btn save-btn"
-            onClick={onExportGame}
+            onClick={handleSave}
             title="保存对局 (S)"
           >
             <span className="control-icon">💾</span>
@@ -127,7 +164,7 @@ const GameControls: React.FC<GameControlsProps> = ({
 
           <button
             className="control-btn share-btn"
-            onClick={() => alert('分享功能开发中...')}
+            onClick={handleShare}
             title="分享对局"
           >
             <span className="control-icon">📤</span>
@@ -176,8 +213,8 @@ const GameControls: React.FC<GameControlsProps> = ({
             <span>浏览走法</span>
           </div>
           <div className="shortcut-item">
-            <kbd>Space</kbd>
-            <span>播放/暂停</span>
+            <kbd>Home/End</kbd>
+            <span>跳转开始/结束</span>
           </div>
           <div className="shortcut-item">
             <kbd>S</kbd>

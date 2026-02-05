@@ -164,10 +164,10 @@ const MoveList: React.FC<MoveListProps> = ({
         ) : (
           <div className="moves-table">
             <div className="moves-header">
-              <div className="move-number-header">#</div>
-              <div className="move-white-header">白方</div>
-              <div className="move-black-header">黑方</div>
-              <div className="move-eval-header">评估</div>
+              <div className="move-number">#</div>
+              <div>白方</div>
+              <div>黑方</div>
+              <div>评估</div>
             </div>
 
             <div className="moves-body">
@@ -181,7 +181,7 @@ const MoveList: React.FC<MoveListProps> = ({
                   <div key={group.moveNumber} className="move-row">
                     <div className="move-number">{group.moveNumber}.</div>
 
-                    <div className="move-cell move-white">
+                    <div className="move-cell">
                       <button
                         className={`move-button ${whiteMoveActive ? 'active' : ''}`}
                         onClick={() => onMoveClick(whiteMoveIndex)}
@@ -201,7 +201,7 @@ const MoveList: React.FC<MoveListProps> = ({
                       )}
                     </div>
 
-                    <div className="move-cell move-black">
+                    <div className="move-cell">
                       {group.blackMove && (
                         <>
                           <button

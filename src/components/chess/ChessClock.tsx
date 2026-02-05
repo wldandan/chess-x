@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 
 interface ChessClockProps {
   timeControl: string
@@ -16,7 +16,8 @@ const ChessClock: React.FC<ChessClockProps> = ({
   const [whiteTime, setWhiteTime] = useState<number>(0)
   const [blackTime, setBlackTime] = useState<number>(0)
   const [isRunning, setIsRunning] = useState<boolean>(false)
-  const [lastUpdate, setLastUpdate] = useState<number>(Date.now())
+  const lastActiveColorRef = useRef<'w' | 'b' | null>(null)
+  const lastTickTimeRef = useRef<number>(Date.now())
 
   // 解析时间控制字符串，如 "10+5" 表示10分钟基本时间+5秒加秒
   const parseTimeControl = useCallback((control: string) => {
@@ -33,79 +34,86 @@ const ChessClock: React.FC<ChessClockProps> = ({
     setWhiteTime(baseTime)
     setBlackTime(baseTime)
     setIsRunning(gameStatus === 'playing')
-    setLastUpdate(Date.now())
-  }, [timeControl, gameStatus, parseTimeControl])
+    lastActiveColorRef.current = null
+    lastTickTimeRef.current = Date.now()
+  }, [timeControl, parseTimeControl])
 
-  // 处理计时器
+  // 重置计时器当游戏状态变化时
+  useEffect(() => {
+    if (gameStatus !== 'playing') {
+      setIsRunning(false)
+    } else {
+      setIsRunning(true)
+      lastTickTimeRef.current = Date.now()
+    }
+  }, [gameStatus])
+
+  // 处理加秒（当走方变化时）
+  useEffect(() => {
+    if (gameStatus !== 'playing') return
+    if (lastActiveColorRef.current === null) {
+      lastActiveColorRef.current = activeColor
+      return
+    }
+
+    const { increment } = parseTimeControl(timeControl)
+    const previousColor = lastActiveColorRef.current
+
+    // 给刚走完的一方加秒
+    if (previousColor !== activeColor) {
+      if (previousColor === 'w') {
+        setWhiteTime(prev => prev + increment)
+      } else {
+        setBlackTime(prev => prev + increment)
+      }
+      lastActiveColorRef.current = activeColor
+      lastTickTimeRef.current = Date.now()
+    }
+  }, [activeColor, gameStatus, timeControl, parseTimeControl])
+
+  // 主计时器循环
   useEffect(() => {
     if (!isRunning || gameStatus !== 'playing') return
 
     const interval = setInterval(() => {
       const now = Date.now()
-      const elapsed = now - lastUpdate
+      const elapsed = now - lastTickTimeRef.current
+      lastTickTimeRef.current = now
 
       if (activeColor === 'w') {
-        const newWhiteTime = whiteTime - elapsed
-        setWhiteTime(newWhiteTime)
-
-        if (newWhiteTime <= 0) {
-          setWhiteTime(0)
-          setIsRunning(false)
-          onTimeout()
-        }
+        setWhiteTime(prev => {
+          const newTime = Math.max(0, prev - elapsed)
+          if (newTime === 0 && prev > 0) {
+            setIsRunning(false)
+            onTimeout()
+          }
+          return newTime
+        })
       } else {
-        const newBlackTime = blackTime - elapsed
-        setBlackTime(newBlackTime)
-
-        if (newBlackTime <= 0) {
-          setBlackTime(0)
-          setIsRunning(false)
-          onTimeout()
-        }
+        setBlackTime(prev => {
+          const newTime = Math.max(0, prev - elapsed)
+          if (newTime === 0 && prev > 0) {
+            setIsRunning(false)
+            onTimeout()
+          }
+          return newTime
+        })
       }
-
-      setLastUpdate(now)
     }, 100)
 
     return () => clearInterval(interval)
-  }, [isRunning, gameStatus, activeColor, whiteTime, blackTime, lastUpdate, onTimeout])
-
-  // 切换走子时加秒
-  useEffect(() => {
-    if (gameStatus !== 'playing') return
-
-    const { increment } = parseTimeControl(timeControl)
-
-    // 当activeColor变化时，给刚走完的一方加秒
-    const now = Date.now()
-    const elapsed = now - lastUpdate
-
-    if (activeColor === 'b') {
-      // 白方刚走完，给白方加秒
-      const newWhiteTime = Math.max(0, whiteTime - elapsed) + increment
-      setWhiteTime(newWhiteTime)
-    } else {
-      // 黑方刚走完，给黑方加秒
-      const newBlackTime = Math.max(0, blackTime - elapsed) + increment
-      setBlackTime(newBlackTime)
-    }
-
-    setLastUpdate(now)
-  }, [activeColor, gameStatus, timeControl, parseTimeControl])
+  }, [isRunning, gameStatus, activeColor, onTimeout])
 
   // 格式化时间显示
   const formatTime = useCallback((milliseconds: number) => {
-    const totalSeconds = Math.floor(milliseconds / 1000)
+    const totalSeconds = Math.ceil(milliseconds / 1000)
     const minutes = Math.floor(totalSeconds / 60)
     const seconds = totalSeconds % 60
-    const millis = Math.floor((milliseconds % 1000) / 10)
 
     if (minutes > 0) {
       return `${minutes}:${seconds.toString().padStart(2, '0')}`
-    } else if (totalSeconds > 10) {
-      return `${seconds}.${millis.toString().padStart(2, '0')}`
     } else {
-      return `${seconds}.${millis.toString().padStart(2, '0')}`
+      return `${seconds}s`
     }
   }, [])
 
@@ -121,8 +129,13 @@ const ChessClock: React.FC<ChessClockProps> = ({
   // 暂停/继续计时器
   const handlePauseResume = useCallback(() => {
     if (gameStatus !== 'playing') return
-    setIsRunning(prev => !prev)
-    setLastUpdate(Date.now())
+    setIsRunning(prev => {
+      const newValue = !prev
+      if (newValue) {
+        lastTickTimeRef.current = Date.now()
+      }
+      return newValue
+    })
   }, [gameStatus])
 
   // 重置计时器
@@ -131,7 +144,8 @@ const ChessClock: React.FC<ChessClockProps> = ({
     setWhiteTime(baseTime)
     setBlackTime(baseTime)
     setIsRunning(gameStatus === 'playing')
-    setLastUpdate(Date.now())
+    lastActiveColorRef.current = null
+    lastTickTimeRef.current = Date.now()
   }, [timeControl, gameStatus, parseTimeControl])
 
   return (

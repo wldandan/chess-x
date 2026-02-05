@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Chess } from 'chess.js'
 import { Chessboard } from 'react-chessboard'
 import ChessClock from './ChessClock'
@@ -17,6 +17,7 @@ interface ChessBoardProps {
   enableAnimation?: boolean
   onMove?: (move: string, game: Chess) => void
   onGameEnd?: (result: string, game: Chess) => void
+  onNotification?: (message: string, type?: 'info' | 'success' | 'warning' | 'error') => void
 }
 
 const ChessBoard: React.FC<ChessBoardProps> = ({
@@ -24,11 +25,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   timeControl = '10+5',
   orientation = 'white',
   showCoordinates = true,
-  highlightLastMove = true,
-  showLegalMoves = true,
+  // highlightLastMove = true,
+  // showLegalMoves = true,
   enableAnimation = true,
   onMove,
-  onGameEnd
+  onGameEnd,
+  onNotification
 }) => {
   const [game, setGame] = useState<Chess>(new Chess(initialFen))
   const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>(orientation)
@@ -38,6 +40,16 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [evaluation, setEvaluation] = useState<number>(0)
   const [gameStatus, setGameStatus] = useState<'playing' | 'checkmate' | 'stalemate' | 'draw' | 'timeout'>('playing')
   const [winner, setWinner] = useState<'white' | 'black' | null>(null)
+
+  // 通知处理器（默认使用 console.log，可被 onNotification 覆盖）
+  const notify = useCallback((message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+    if (onNotification) {
+      onNotification(message, type)
+    } else {
+      // 默认使用 console，可以后续替换为更好的通知系统
+      console.log(`[${type.toUpperCase()}] ${message}`)
+    }
+  }, [onNotification])
 
   // 初始化游戏
   useEffect(() => {
@@ -200,6 +212,77 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     URL.revokeObjectURL(url)
   }, [getCurrentPgn])
 
+  // 键盘快捷键支持
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // 如果焦点在输入框中，不触发快捷键
+      const target = e.target as HTMLElement
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return
+      }
+
+      // 忽略组合键
+      if (e.ctrlKey || e.metaKey || e.altKey) {
+        return
+      }
+
+      switch (e.key.toLowerCase()) {
+        case 'z':
+          if (moveHistory.length > 0 && currentMoveIndex >= 0 && gameStatus === 'playing') {
+            handleUndo()
+          }
+          break
+        case 'f':
+          handleFlipBoard()
+          break
+        case 'a':
+          handleToggleAnalysis()
+          break
+        case 'arrowleft':
+          e.preventDefault()
+          if (currentMoveIndex > -1) {
+            handleGoToMove(currentMoveIndex - 1)
+          }
+          break
+        case 'arrowright':
+          e.preventDefault()
+          if (currentMoveIndex < moveHistory.length - 1) {
+            handleGoToMove(currentMoveIndex + 1)
+          }
+          break
+        case 'home':
+          e.preventDefault()
+          handleGoToMove(-1)
+          break
+        case 'end':
+          e.preventDefault()
+          handleGoToMove(moveHistory.length - 1)
+          break
+        case 'r':
+          if (gameStatus !== 'playing') {
+            handleReset()
+          }
+          break
+        case 's':
+          handleExportGame()
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [
+    moveHistory,
+    currentMoveIndex,
+    gameStatus,
+    handleUndo,
+    handleFlipBoard,
+    handleToggleAnalysis,
+    handleGoToMove,
+    handleReset,
+    handleExportGame
+  ])
+
   return (
     <div className="chess-board-container">
       <div className="chess-game-header">
@@ -259,9 +342,11 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         <div className="chess-center-panel">
           <div className="chess-board-wrapper">
             <Chessboard
+              id="basic-chessboard"
               position={game.fen()}
               onPieceDrop={handleMove}
               boardOrientation={boardOrientation}
+              boardWidth={560}
               customBoardStyle={{
                 borderRadius: '4px',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
@@ -285,6 +370,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
             canUndo={moveHistory.length > 0 && currentMoveIndex >= 0}
             isAnalyzing={isAnalyzing}
             gameStatus={gameStatus}
+            onNotification={notify}
           />
         </div>
 
