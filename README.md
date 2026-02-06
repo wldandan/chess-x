@@ -1,5 +1,6 @@
 # Aaron Chess - 国际象棋比赛训练应用
 
+[![CI](https://github.com/your-username/aaron-chess/actions/workflows/test.yml/badge.svg)](https://github.com/your-username/aaron-chess/actions/workflows/test.yml)
 [![Vercel](https://img.shields.io/badge/deployed%20on-Vercel-black?logo=vercel)](https://vercel.com)
 [![Render](https://img.shields.io/badge/backend-Render-blue?logo=render)](https://render.com)
 [![FastAPI](https://img.shields.io/badge/backend-FastAPI-green?logo=fastapi)](https://fastapi.tiangolo.com)
@@ -111,7 +112,36 @@ aaron-chess/
 ### 开发工具
 - **代码格式化**: Prettier + ESLint
 - **版本控制**: Git + GitHub
-- **CI/CD**: GitHub Actions (可选)
+- **CI/CD**: GitHub Actions
+- **测试**: Vitest + Playwright
+
+## 🧪 测试
+
+### 运行测试
+
+```bash
+# E2E 测试
+npm run test:e2e
+
+# E2E 测试 (UI 模式)
+npm run test:e2e:ui
+
+# 单元测试
+npm run test:run
+
+# 测试覆盖率
+npm run test:coverage
+```
+
+### CI/CD
+
+项目使用 GitHub Actions 进行持续集成：
+
+- **Push/PR 到 main/develop 分支**：自动运行测试
+- **测试类型**：类型检查、Lint、单元测试、E2E 测试
+- **测试报告**：失败时自动上传截图和报告
+
+查看 [`.github/workflows/test.yml`](./.github/workflows/test.yml) 了解 CI 配置。
 
 ## 🌐 API文档
 
