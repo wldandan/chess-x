@@ -90,38 +90,22 @@
   color: var(--text-secondary);
   text-decoration: none;
   transition: all var(--transition-base);
-  border-bottom: 3px solid transparent;
   padding: var(--space-3) var(--space-4);
   position: relative;
-}
-
-.nav-link::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: var(--secondary-color);
-  opacity: 0;
-  transition: opacity var(--transition-base);
   border-radius: var(--radius-md);
-  z-index: -1;
 }
 
 .nav-link:hover {
-  color: var(--secondary-color);
-}
-
-.nav-link:hover::before {
-  opacity: 0.1;
+  background-color: #475569;
+  color: white;
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-link.active {
-  color: var(--secondary-color);
-  border-bottom-color: var(--secondary-color);
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: white;
   font-weight: 600;
-}
-
-.nav-link.active::before {
-  opacity: 0.15;
+  box-shadow: var(--shadow-md);
 }
 
 .nav-icon {
