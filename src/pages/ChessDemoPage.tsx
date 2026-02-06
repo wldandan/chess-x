@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Chess } from 'chess.js'
 import '../styles/pages.css'
+import { chessAPI } from '../services/api'
 
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const
 const RANKS = ['8', '7', '6', '5', '4', '3', '2', '1'] as const
@@ -75,6 +76,11 @@ const ChessDemoPage: React.FC = () => {
   const [hintMove, setHintMove] = useState<string | null>(null)  // 存储推荐走法
   const [hintSquares, setHintSquares] = useState<{ from: Square; to: Square } | null>(null)  // 存储推荐的起始和目标位置
   const [hintClickCount, setHintClickCount] = useState(0)  // 提示点击次数
+
+  // API 相关状态
+  const [currentGameId, setCurrentGameId] = useState<string | null>(null)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [backendConnected, setBackendConnected] = useState(false)
 
   function getPieceSymbol(piece: { type: string; color: string } | null): string {
     if (!piece) return ''
@@ -183,7 +189,60 @@ const ChessDemoPage: React.FC = () => {
     setHintMove(null)  // 清除提示
     setHintSquares(null)  // 清除棋盘提示
     setHintClickCount(0)  // 重置计数
+    setCurrentGameId(null)  // 清除当前游戏 ID
+    setSaveStatus('idle')
   }
+
+  // 保存游戏到后端
+  const saveGameToBackend = async () => {
+    if (game.history().length === 0) return
+
+    setSaveStatus('saving')
+    try {
+      const result = game.isCheckmate() ? (game.turn() === 'w' ? '0-1' : '1-0') : null
+      const data = {
+        fen: game.fen(),
+        moves: game.history(),
+        result: result || undefined,
+        game_type: aiMode ? 'ai' : 'human',
+        white_username: 'Player',
+        black_username: aiMode ? 'AI' : 'Player2',
+      }
+
+      if (currentGameId) {
+        // 更新现有游戏
+        await chessAPI.updateGame(currentGameId, data)
+      } else {
+        // 创建新游戏
+        const saved = await chessAPI.saveGame(data)
+        setCurrentGameId(saved.id)
+      }
+      setSaveStatus('saved')
+    } catch (error) {
+      console.error('Failed to save game:', error)
+      setSaveStatus('error')
+    }
+  }
+
+  // 检查后端连接状态
+  useEffect(() => {
+    const checkBackend = async () => {
+      try {
+        const health = await chessAPI.getHealth()
+        setBackendConnected(health.database === 'connected')
+      } catch {
+        setBackendConnected(false)
+      }
+    }
+    checkBackend()
+  }, [])
+
+  // 监听游戏结束，自动保存
+  useEffect(() => {
+    if (game.isGameOver() && saveStatus !== 'saved') {
+      saveGameToBackend()
+    }
+  }, [game.fen(), game.isGameOver()])
 
   // 提示功能：AI 推荐最佳走法（不自动执行）
   const handleHint = () => {
@@ -379,6 +438,23 @@ const ChessDemoPage: React.FC = () => {
             <p>走法数: {game.history().length}</p>
             <p>FEN: {game.fen()}</p>
             <p>状态: {game.isCheckmate() ? '将死' : game.isDraw() ? '和棋' : '进行中'}</p>
+
+            {/* 后端连接状态 */}
+            <div style={{ marginTop: '15px', padding: '10px', borderRadius: '6px', background: backendConnected ? '#d4edda' : '#f8d7da' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
+                <span style={{ fontSize: '16px' }}>{backendConnected ? '🟢' : '🔴'}</span>
+                <span>{backendConnected ? '后端已连接' : '后端未连接'}</span>
+              </div>
+            </div>
+
+            {/* 保存状态 */}
+            {saveStatus !== 'idle' && (
+              <div style={{ marginTop: '10px', fontSize: '13px' }}>
+                {saveStatus === 'saving' && <span style={{ color: '#3498db' }}>💾 保存中...</span>}
+                {saveStatus === 'saved' && <span style={{ color: '#27ae60' }}>✅ 已保存到云端</span>}
+                {saveStatus === 'error' && <span style={{ color: '#e74c3c' }}>❌ 保存失败</span>}
+              </div>
+            )}
           </div>
         </div>
       </div>
