@@ -91,27 +91,26 @@
 
 /* 主要按钮 */
 .btn-primary {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, #5a7a42 100%);
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   color: white;
   border-color: transparent;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--secondary-hover) 0%, var(--secondary-color) 100%);
-  box-shadow: var(--shadow-glow);
+  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
 /* 次要按钮 */
 .btn-secondary {
-  background-color: var(--bg-secondary);
-  color: var(--secondary-color);
-  border-color: var(--secondary-color);
+  background-color: #334155;
+  color: white;
+  border-color: transparent;
 }
 
 .btn-secondary:hover {
-  background-color: var(--secondary-color);
-  color: white;
+  background-color: #475569;
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
@@ -120,36 +119,37 @@
 .btn-outline {
   background-color: transparent;
   color: var(--text-primary);
-  border-color: var(--border-color);
+  border-color: #475569;
 }
 
 .btn-outline:hover {
-  background-color: var(--bg-tertiary);
-  border-color: var(--text-secondary);
+  background-color: #f1f5f9;
+  border-color: #334155;
 }
 
 /* 危险按钮 */
 .btn-danger {
-  background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
+  background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
   color: white;
   border-color: transparent;
 }
 
 .btn-danger:hover {
-  background: linear-gradient(135deg, #c0392b 0%, var(--danger-color) 100%);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.4);
   transform: translateY(-1px);
 }
 
 /* 成功按钮 */
 .btn-success {
-  background: linear-gradient(135deg, var(--success-color) 0%, var(--success-light) 100%);
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
   color: white;
   border-color: transparent;
 }
 
 .btn-success:hover {
-  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+  background: linear-gradient(135deg, #166534 0%, #14532d 100%);
+  box-shadow: 0 4px 12px rgba(22, 101, 52, 0.4);
   transform: translateY(-1px);
 }
 
