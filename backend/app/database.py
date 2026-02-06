@@ -2,9 +2,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # 从环境变量获取数据库URL，Render会自动提供DATABASE_URL
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -15,7 +12,6 @@ if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
 
 # 本地开发使用的SQLite（可选）
 LOCAL_DB_PATH = "sqlite:///./chess.db"
-LOCAL_TEST_DB_PATH = "sqlite:///./test.db"
 
 # 根据环境选择数据库URL
 if DATABASE_URL:
@@ -24,13 +20,19 @@ else:
     SQLALCHEMY_DATABASE_URL = LOCAL_DB_PATH
 
 # 创建数据库引擎
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    # PostgreSQL特定配置
-    pool_size=5,
-    max_overflow=10,
-    pool_pre_ping=True,
-)
+# SQLite 不支持 pool 参数，需要条件配置
+if DATABASE_URL:
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        pool_size=5,
+        max_overflow=10,
+        pool_pre_ping=True,
+    )
+else:
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        connect_args={"check_same_thread": False}  # SQLite 需要
+    )
 
 # 创建SessionLocal类
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

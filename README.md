@@ -227,12 +227,20 @@ npm run test:coverage
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
 
+## 📚 文档
+
+- **[用户手册](docs/USER_GUIDE.md)** - 使用说明和常见问题
+- **[功能说明](docs/FEATURES.md)** - 功能模块详细介绍
+- **[贡献指南](CONTRIBUTING.md)** - 开发者贡献指南
+- **[部署指南](DEPLOYMENT_GUIDE.md)** - 部署到生产环境
+- **[API 文档](docs/API.md)** - 后端 API 接口文档
+
 ## 📞 支持
 
-- **项目文档**: [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
-- **后端文档**: [backend/README.md](./backend/README.md)
-- **功能文档**: [features/README.md](./features/README.md)
-- **问题反馈**: GitHub Issues
+- **项目文档**: [docs/](docs/)
+- **后端文档**: [backend/README.md](backend/README.md)
+- **功能文档**: [features/](features/)
+- **问题反馈**: [GitHub Issues](https://github.com/wldandan/chess-x/issues)
 
 ## 🙏 致谢
 
