@@ -56,8 +56,9 @@ def create_tables():
 # 健康检查：测试数据库连接
 def check_db_connection():
     try:
+        from sqlalchemy import text
         db = SessionLocal()
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         db.close()
         return True
     except Exception as e:
