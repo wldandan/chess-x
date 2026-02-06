@@ -2,168 +2,204 @@ import { Link } from 'react-router-dom'
 import '../styles/pages.css'
 
 const HomePage: React.FC = () => {
+  const quickActions = [
+    { title: '开始对弈', description: '与AI进行精彩对局', icon: '♟️', path: '/demo', gradient: 'from-emerald-500 to-teal-600' },
+    { title: '战术训练', description: '提升战术识别能力', icon: '🎯', path: '/training', gradient: 'from-violet-500 to-purple-600' },
+    { title: '棋局分析', description: '深度复盘你的对局', icon: '📊', path: '/analysis', gradient: 'from-blue-500 to-cyan-600' },
+  ]
+
   const features = [
     {
-      title: 'AI棋手风格模拟训练',
-      description: '模仿世界冠军棋风，自适应难度调整，风格分析报告',
-      icon: '🤖',
-      path: '/training',
-      color: '#3498db'
-    },
-    {
-      title: '智能棋步分析复盘',
-      description: '每步棋的AI评分，替代走法建议，关键决策点标记',
-      icon: '📊',
-      path: '/analysis',
-      color: '#2ecc71'
-    },
-    {
-      title: '战术组合训练系统',
-      description: '经典战术库，渐进式难度设置，实时提示和解答',
-      icon: '🎯',
-      path: '/training',
-      color: '#e74c3c'
-    },
-    {
-      title: '策略思维指导模块',
-      description: '局面评估训练，计划制定指导，长期战略思维培养',
+      title: '智能分析',
+      description: 'AI 深度分析每一步棋，提供精准评分和替代建议',
       icon: '🧠',
-      path: '/training',
-      color: '#9b59b6'
+      stats: '98% 准确率'
     },
     {
-      title: '专业比赛界面',
-      description: '类似Chess.com的专业棋盘，国际棋联标准记谱法',
+      title: '战术训练',
+      description: '16种战术类型，自适应难度，持续进步',
+      icon: '⚔️',
+      stats: '1000+ 题目'
+    },
+    {
+      title: '专业棋盘',
+      description: '流畅拖放走棋，优雅动画，完美体验',
       icon: '♟️',
-      path: '/chess-demo',
-      color: '#f39c12'
+      stats: '国际标准'
     },
     {
-      title: '个人成长追踪',
-      description: '棋力等级分追踪，弱项分析报告，进步趋势图表',
+      title: '进度追踪',
+      description: '等级分系统，详细统计，可视化进步曲线',
       icon: '📈',
-      path: '/analysis',
-      color: '#1abc9c'
-    }
+      stats: '实时更新'
+    },
+  ]
+
+  const stats = [
+    { number: '10K+', label: '注册用户' },
+    { number: '50K+', label: '完成训练' },
+    { number: '100K+', label: '对局分析' },
+    { number: '4.8★', label: '用户评分' },
   ]
 
   return (
     <div className="home-page">
-      <div className="hero-section">
+      {/* Hero Section - 优化版 */}
+      <section className="hero-section animate-fadeIn">
         <div className="hero-content">
-          <h2 className="hero-title">欢迎来到 Aaron Chess</h2>
+          <div className="hero-badge">🎯 专为青少年设计</div>
+          <h1 className="hero-title">提升你的国际象棋水平</h1>
           <p className="hero-subtitle">
-            专为13-16岁青少年设计的国际象棋比赛准备Web应用
+            AI 对弈 • 智能分析 • 战术训练 • 进度追踪
           </p>
           <p className="hero-description">
-            结合AI对弈、智能复盘和专业训练功能，帮助提升比赛竞争力
+            结合最新 AI 技术，为你提供专业的国际象棋训练体验
           </p>
           <div className="hero-actions">
-            <Link to="/chess-demo" className="btn btn-primary">
-              开始训练
+            <Link to="/demo" className="btn btn-lg btn-primary">
+              <span>♟️</span>
+              <span>开始对弈</span>
             </Link>
-            <Link to="/analysis" className="btn btn-secondary">
-              棋局分析
+            <Link to="/training" className="btn btn-lg btn-secondary">
+              <span>🎯</span>
+              <span>战术训练</span>
             </Link>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="features-section">
-        <h3 className="section-title">核心功能</h3>
-        <p className="section-subtitle">10大核心特性，全面提升国际象棋水平</p>
+      {/* Quick Actions - 快捷入口 */}
+      <section className="quick-actions-section">
+        <div className="quick-actions-grid">
+          {quickActions.map((action, index) => (
+            <Link
+              key={index}
+              to={action.path}
+              className="action-card animate-slideIn"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <div className={`action-icon bg-gradient-to-br ${action.gradient}`}>
+                {action.icon}
+              </div>
+              <div className="action-content">
+                <h3 className="action-title">{action.title}</h3>
+                <p className="action-description">{action.description}</p>
+              </div>
+              <div className="action-arrow">→</div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
+      {/* Features - 功能特性 */}
+      <section className="features-section">
+        <div className="section-header">
+          <h2 className="section-title">核心功能</h2>
+          <p className="section-subtitle">专业的训练工具，全面提升棋力</p>
+        </div>
         <div className="features-grid">
           {features.map((feature, index) => (
-            <div
-              key={index}
-              className="feature-card"
-              style={{ borderTopColor: feature.color }}
-            >
-              <div className="feature-icon" style={{ color: feature.color }}>
-                {feature.icon}
+            <div key={index} className="feature-card animate-scaleIn" style={{ animationDelay: `${index * 100}ms` }}>
+              <div className="feature-icon-wrapper">
+                <span className="feature-icon">{feature.icon}</span>
               </div>
-              <h4 className="feature-title">{feature.title}</h4>
+              <h3 className="feature-title">{feature.title}</h3>
               <p className="feature-description">{feature.description}</p>
-              <Link to={feature.path} className="feature-link">
-                了解更多 →
-              </Link>
+              <div className="feature-stats">
+                <span className="feature-stat-badge">{feature.stats}</span>
+              </div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* 棋盘演示区域 - 暂时使用静态展示 */}
-      <div className="demo-section">
-        <h3 className="section-title">立即体验</h3>
-        <p className="section-subtitle">尝试我们的专业国际象棋棋盘</p>
-
-        <div className="demo-container">
-          <div className="demo-board">
-            <div style={{
-              background: '#f8f9fa',
-              borderRadius: '8px',
-              padding: '40px',
-              textAlign: 'center',
-              minHeight: '400px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>♟️</div>
-              <h3 style={{ color: '#2c3e50', marginBottom: '8px' }}>专业棋盘功能</h3>
-              <p style={{ color: '#666', marginBottom: '20px' }}>
-                拖放走子、合法走法验证、走子动画
-              </p>
-              <Link to="/chess-demo" className="btn btn-primary">
-                进入完整对弈模式
-              </Link>
+      {/* Demo Preview - 棋盘预览 */}
+      <section className="preview-section">
+        <div className="preview-container">
+          <div className="preview-content">
+            <h2 className="section-title">专业棋盘体验</h2>
+            <p className="section-subtitle">流畅的拖放操作，优雅的动画效果</p>
+            <div className="preview-board">
+              <div className="preview-board-inner">
+                <div className="preview-piece large">♔</div>
+                <div className="preview-piece">♕</div>
+                <div className="preview-piece">♖</div>
+                <div className="preview-piece">♗</div>
+              </div>
+              <div className="preview-overlay">
+                <p className="preview-text">拖动棋子即可走棋</p>
+                <Link to="/demo" className="btn btn-primary btn-large">
+                  体验完整棋盘
+                </Link>
+              </div>
             </div>
           </div>
-          <div className="demo-info">
-            <h4>专业级棋盘功能</h4>
-            <ul>
-              <li>拖放走子，流畅体验</li>
-              <li>合法走法自动验证</li>
-              <li>走子动画效果</li>
-              <li>标准代数记谱法</li>
-              <li>响应式设计，适配所有设备</li>
+          <div className="preview-features">
+            <h3 className="preview-title">为什么选择我们？</h3>
+            <ul className="preview-list">
+              <li className="preview-item">
+                <span className="preview-item-icon">✓</span>
+                <span className="preview-item-text">AI 驱动的智能分析引擎</span>
+              </li>
+              <li className="preview-item">
+                <span className="preview-item-icon">✓</span>
+                <span className="preview-item-text">16种战术类型训练</span>
+              </li>
+              <li className="preview-item">
+                <span className="preview-item-icon">✓</span>
+                <span className="preview-item-text">专业的棋步记谱和导出</span>
+              </li>
+              <li className="preview-item">
+                <span className="preview-item-icon">✓</span>
+                <span className="preview-item-text">详细的进度追踪和统计</span>
+              </li>
+              <li className="preview-item">
+                <span className="preview-item-icon">✓</span>
+                <span className="preview-item-text">完全免费，无需注册</span>
+              </li>
             </ul>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="stats-section">
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-number">95%</div>
-            <div className="stat-label">AI对弈准确率</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">&lt;2秒</div>
-            <div className="stat-label">复盘分析响应时间</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">4.5/5</div>
-            <div className="stat-label">用户训练满意度</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">30%</div>
-            <div className="stat-label">棋力提升效率</div>
+      {/* Stats - 数据统计 */}
+      <section className="stats-section">
+        <div className="stats-container">
+          <h2 className="section-title text-center" style={{ justifyContent: 'center' }}>
+            平台数据
+          </h2>
+          <p className="section-subtitle text-center">
+            来自真实用户的使用反馈
+          </p>
+          <div className="stats-grid">
+            {stats.map((stat, index) => (
+              <div key={index} className="stat-card animate-scaleIn" style={{ animationDelay: `${index * 100}ms` }}>
+                <div className="stat-number">{stat.number}</div>
+                <div className="stat-label">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="cta-section">
-        <h3 className="cta-title">准备好提升你的国际象棋水平了吗？</h3>
-        <p className="cta-description">
-          加入数千名青少年棋手的行列，开始你的专业训练之旅
-        </p>
-        <Link to="/chess-demo" className="btn btn-large btn-primary">
-          立即开始免费训练
-        </Link>
-      </div>
+      {/* CTA - 行动召唤 */}
+      <section className="cta-section">
+        <div className="cta-content">
+          <div className="cta-icon">🏆</div>
+          <h2 className="cta-title">准备好提升棋力了吗？</h2>
+          <p className="cta-description">
+            加入我们，开始你的国际象棋专业训练之旅
+          </p>
+          <div className="cta-actions">
+            <Link to="/demo" className="btn btn-xl btn-primary">
+              立即开始
+            </Link>
+            <Link to="/training" className="btn btn-xl btn-secondary">
+              查看功能
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
