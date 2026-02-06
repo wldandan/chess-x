@@ -5,10 +5,10 @@
   --primary-light: #334155;
   --primary-dark: #0f172a;
 
-  /* 辅助色 - 活力橙色 */
-  --secondary-color: #f97316;
-  --secondary-hover: #ea580c;
-  --accent-color: #fcd34d;
+  /* 辅助色 - 清新绿色 */
+  --secondary-color: #34d399;
+  --secondary-hover: #10b981;
+  --accent-color: #fbbf24;
 
   /* 功能色优化 */
   --success-color: #22c55e;
@@ -43,7 +43,7 @@
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 4px 20px rgba(249, 115, 22, 0.4);
+  --shadow-glow: 0 4px 20px rgba(52, 211, 153, 0.4);
 
   /* 圆角 */
   --radius-sm: 4px;
@@ -200,7 +200,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--secondary-color);
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
 }
 
 input::placeholder,
