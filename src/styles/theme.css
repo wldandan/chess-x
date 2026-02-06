@@ -1,0 +1,118 @@
+/* 配色方案选择 - 解除注释即可使用 */
+
+/* 方案 1: 清新自然绿 ⭐️ 推荐 */
+/* :root {
+  --primary-color: #1a1a1a;
+  --secondary-color: #10b981; /* 鲜亮翠绿 */
+  --secondary-hover: #059669;
+  --accent-color: #fbbf24;
+} */
+
+/* 方案 2: 现代蓝紫色 */
+/* :root {
+  --primary-color: #1e293b;
+  --secondary-color: #6366f1; /* 蓝紫色 */
+  --secondary-hover: #4f46e5;
+  --accent-color: #a78bfa;
+} */
+
+/* 方案 3: 活力橙红 */
+/* :root {
+  --primary-color: #1f2937;
+  --secondary-color: #f97316; /* 活力橙 */
+  --secondary-hover: #ea580c;
+  --accent-color: #fcd34d;
+} */
+
+/* 方案 4: 专业深蓝 */
+/* :root {
+  --primary-color: #0f172a;
+  --secondary-color: #3b82f6; /* 亮蓝色 */
+  --secondary-hover: #2563eb;
+  --accent-color: #60a5fa;
+} */
+
+/* 方案 5: 棋盘经典 */
+/* :root {
+  --primary-color: #1e293b;
+  --secondary-color: #059669; /* 经典棋盘绿 */
+  --secondary-hover: #047857;
+  --accent-color: #fbbf24;
+} */
+
+/* ========== 当前使用：清新活力配色 ========== */
+:root {
+  /* 主色调 */
+  --primary-color: #1e293b;
+  --primary-light: #334155;
+  --primary-dark: #0f172a;
+
+  /* 辅助色 - 鲜亮翠绿色 */
+  --secondary-color: #10b981;
+  --secondary-hover: #059669;
+  --accent-color: #fbbf24;
+
+  /* 功能色优化 */
+  --success-color: #22c55e;
+  --success-light: #4ade80;
+  --warning-color: #f59e0b;
+  --warning-light: #fbbf24;
+  --danger-color: #ef4444;
+  --danger-light: #f87171;
+  --info-color: #3b82f6;
+  --info-light: #60a5fa;
+
+  /* 背景色 */
+  --bg-primary: #fafafa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f3f4f6;
+  --bg-dark: #1e293b;
+
+  /* 文字色 */
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --text-light: #ffffff;
+  --text-muted: #cbd5e1;
+
+  /* 边框色 */
+  --border-color: #e2e8f0;
+  --border-light: #f1f5f9;
+  --border-dark: #cbd5e1;
+
+  /* 阴影优化 */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 4px 20px rgba(16, 185, 129, 0.4);
+
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* 间距 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* 过渡 */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* 布局 */
+  --header-height: 70px;
+  --navbar-height: 60px;
+  --footer-height: 60px;
+  --container-max: 1280px;
+}

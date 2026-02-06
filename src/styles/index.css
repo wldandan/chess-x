@@ -1,49 +1,49 @@
 /* 全局样式 - 优化版 */
 :root {
-  /* 主色调 - 棋盘木色主题 */
-  --primary-color: #2c3e50;
-  --primary-light: #34495e;
-  --primary-dark: #1a252f;
+  /* 主色调 - 深色系 */
+  --primary-color: #1e293b;
+  --primary-light: #334155;
+  --primary-dark: #0f172a;
 
-  /* 辅助色 - 棋盘格灵感 */
-  --secondary-color: #769656; /* 绿色格子 */
-  --secondary-hover: #6d8e4f;
-  --accent-color: #eeeed2; /* 米色格子 */
+  /* 辅助色 - 鲜亮翠绿色 */
+  --secondary-color: #10b981;
+  --secondary-hover: #059669;
+  --accent-color: #fbbf24;
 
-  /* 功能色 */
-  --success-color: #27ae60;
-  --success-light: #2ecc71;
-  --warning-color: #f39c12;
-  --warning-light: #f1c40f;
-  --danger-color: #e74c3c;
-  --danger-light: #e74c3c;
-  --info-color: #3498db;
-  --info-light: #5dade2;
+  /* 功能色优化 */
+  --success-color: #22c55e;
+  --success-light: #4ade80;
+  --warning-color: #f59e0b;
+  --warning-light: #fbbf24;
+  --danger-color: #ef4444;
+  --danger-light: #f87171;
+  --info-color: #3b82f6;
+  --info-light: #60a5fa;
 
   /* 背景色 */
   --bg-primary: #fafafa;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #f5f5f5;
-  --bg-dark: #2c3e50;
+  --bg-tertiary: #f3f4f6;
+  --bg-dark: #1e293b;
 
   /* 文字色 */
-  --text-primary: #1a1a1a;
-  --text-secondary: #666666;
-  --text-tertiary: #999999;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
   --text-light: #ffffff;
-  --text-muted: #bdc3c7;
+  --text-muted: #cbd5e1;
 
   /* 边框色 */
-  --border-color: #e0e0e0;
-  --border-light: #ecf0f1;
-  --border-dark: #bdc3c7;
+  --border-color: #e2e8f0;
+  --border-light: #f1f5f9;
+  --border-dark: #cbd5e1;
 
-  /* 阴影 */
+  /* 阴影优化 */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 0 20px rgba(118, 150, 86, 0.3);
+  --shadow-glow: 0 4px 20px rgba(16, 185, 129, 0.4);
 
   /* 圆角 */
   --radius-sm: 4px;
@@ -78,14 +78,14 @@
 /* 深色主题变量 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2c2c2c;
-    --bg-tertiary: #242424;
-    --text-primary: #f5f5f5;
-    --text-secondary: #bdc3c7;
-    --text-tertiary: #95a5a6;
-    --border-color: #404040;
-    --border-light: #353535;
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-tertiary: #94a3b8;
+    --border-color: #334155;
+    --border-light: #1e293b;
   }
 }
 
@@ -200,7 +200,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--secondary-color);
-  box-shadow: 0 0 0 3px rgba(118, 150, 86, 0.15);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 }
 
 input::placeholder,
