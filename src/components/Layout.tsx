@@ -11,7 +11,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navItems = [
     { path: '/', label: '首页', icon: '🏠' },
-    { path: '/chess-demo', label: '棋盘演示', icon: '♟️' },
+    { path: '/demo', label: '棋盘演示', icon: '♟️' },
     { path: '/training', label: '训练', icon: '🎯' },
     { path: '/analysis', label: '分析', icon: '📊' },
     { path: '/settings', label: '设置', icon: '⚙️' },
