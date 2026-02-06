@@ -1,6 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ChessBoard from '../components/chess/ChessBoard'
+import AIThinkingIndicator from '../components/ai/AIThinkingIndicator'
+import { useGameStore, useAIState, useIsPlaying } from '../stores/game.store'
+import type { GameConfig, TimeControl } from '../types/game.types'
+import type { DifficultyLevel } from '../types/chess.types'
 import '../styles/pages.css'
+
+// Parse time control string to TimeControl object
+const parseTimeControl = (tc: string): TimeControl => {
+  const [base, inc] = tc.split('+').map(Number)
+  return {
+    baseMinutes: base,
+    incrementSeconds: inc || 0,
+    type: inc ? 'increment' : 'suddenDeath',
+    totalTime: base * 60 * 1000,
+  }
+}
 
 const ChessDemoPage: React.FC = () => {
   const [timeControl, setTimeControl] = useState('10+5')
@@ -9,6 +24,23 @@ const ChessDemoPage: React.FC = () => {
   const [highlightLastMove, setHighlightLastMove] = useState(true)
   const [showLegalMoves, setShowLegalMoves] = useState(true)
   const [enableAnimation, setEnableAnimation] = useState(true)
+
+  // AI mode state
+  const [aiMode, setAiMode] = useState(false)
+  const [aiDifficulty, setAiDifficulty] = useState<DifficultyLevel>('medium')
+  const [playerColor, setPlayerColor] = useState<'white' | 'black'>('white')
+
+  // Game store hooks
+  const aiState = useAIState()
+  const isPlaying = useIsPlaying()
+  const { initializeAI, setAIDifficulty, startGame } = useGameStore()
+
+  // Initialize AI engine on mount
+  useEffect(() => {
+    if (aiMode && !aiState.isReady) {
+      initializeAI()
+    }
+  }, [aiMode, aiState.isReady, initializeAI])
 
   const timeControls = [
     { value: '1+0', label: '闪电战 1+0' },
@@ -19,14 +51,69 @@ const ChessDemoPage: React.FC = () => {
     { value: '30+0', label: '慢棋 30+0' }
   ]
 
-  const handleMove = (move: string, game: any) => {
-    console.log('Move made:', move)
-    console.log('Game state:', game.fen())
+  const aiDifficulties: { value: DifficultyLevel; label: string; description: string }[] = [
+    { value: 'beginner', label: '初学者', description: '适合初学者，AI会犯错' },
+    { value: 'easy', label: '简单', description: '基础战术，适合学习' },
+    { value: 'medium', label: '中等', description: '平衡难度，有挑战性' },
+    { value: 'hard', label: '困难', description: '需要深入思考' },
+    { value: 'expert', label: '专家', description: '接近大师水平' },
+    { value: 'master', label: '大师', description: '最强AI，极具挑战' },
+  ]
+
+  const handleMove = (_move: string, _game?: any) => {
+    // Move handled by game store
   }
 
-  const handleGameEnd = (result: string, game: any) => {
-    console.log('Game ended:', result)
-    alert(`对局结束：${result}`)
+  const handleGameEnd = (_result: string, _game?: any) => {
+    // Game end handled by game store
+  }
+
+  const handleStartNewGame = async () => {
+    const tc = parseTimeControl(timeControl)
+
+    if (aiMode) {
+      // AI vs Human game
+      const config: GameConfig = {
+        whitePlayer: playerColor === 'white'
+          ? { type: 'human', name: '你' }
+          : { type: 'ai', name: `AI (${aiDifficulties.find(d => d.value === aiDifficulty)?.label})` },
+        blackPlayer: playerColor === 'black'
+          ? { type: 'human', name: '你' }
+          : { type: 'ai', name: `AI (${aiDifficulties.find(d => d.value === aiDifficulty)?.label})` },
+        timeControl: tc,
+        variant: 'standard',
+        rated: false,
+        allowTakeback: true,
+        allowDrawOffer: true,
+        autoQueen: true,
+      }
+
+      await setAIDifficulty(aiDifficulty)
+      await startGame(config)
+      // Sync orientation with player color
+      setOrientation(playerColor)
+    } else {
+      // Human vs Human game (demo mode)
+      const config: GameConfig = {
+        whitePlayer: { type: 'human', name: '白方玩家' },
+        blackPlayer: { type: 'human', name: '黑方玩家' },
+        timeControl: tc,
+        variant: 'standard',
+        rated: false,
+        allowTakeback: true,
+        allowDrawOffer: true,
+        autoQueen: true,
+      }
+
+      await startGame(config)
+    }
+  }
+
+  const handleDifficultyChange = (difficulty: DifficultyLevel) => {
+    setAiDifficulty(difficulty)
+    if (aiState.isReady) {
+      setAIDifficulty(difficulty)
+    }
   }
 
   return (
@@ -56,6 +143,67 @@ const ChessDemoPage: React.FC = () => {
           <div className="control-section">
             <h3 className="section-title">比赛设置</h3>
 
+            {/* Game Mode Toggle */}
+            <div className="control-group">
+              <label className="control-label">游戏模式</label>
+              <div className="mode-toggle">
+                <button
+                  className={`mode-btn ${!aiMode ? 'active' : ''}`}
+                  onClick={() => setAiMode(false)}
+                >
+                  两人对弈
+                </button>
+                <button
+                  className={`mode-btn ${aiMode ? 'active' : ''}`}
+                  onClick={() => setAiMode(true)}
+                >
+                  AI 对战
+                </button>
+              </div>
+            </div>
+
+            {/* AI Mode Settings */}
+            {aiMode && (
+              <>
+                <div className="control-group">
+                  <label className="control-label">AI 难度</label>
+                  <div className="difficulty-selector">
+                    <select
+                      value={aiDifficulty}
+                      onChange={(e) => handleDifficultyChange(e.target.value as DifficultyLevel)}
+                      className="difficulty-select"
+                    >
+                      {aiDifficulties.map((diff) => (
+                        <option key={diff.value} value={diff.value}>
+                          {diff.label} - {diff.description}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="control-group">
+                  <label className="control-label">执棋颜色</label>
+                  <div className="color-selector">
+                    <button
+                      className={`color-btn ${playerColor === 'white' ? 'active' : ''}`}
+                      onClick={() => setPlayerColor('white')}
+                    >
+                      <span className="btn-icon">♔</span>
+                      <span className="btn-label">执白先行</span>
+                    </button>
+                    <button
+                      className={`color-btn ${playerColor === 'black' ? 'active' : ''}`}
+                      onClick={() => setPlayerColor('black')}
+                    >
+                      <span className="btn-icon">♚</span>
+                      <span className="btn-label">执黑后手</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
             <div className="control-group">
               <label className="control-label">时间控制</label>
               <div className="time-controls">
@@ -77,6 +225,7 @@ const ChessDemoPage: React.FC = () => {
                 <button
                   className={`orientation-btn ${orientation === 'white' ? 'active' : ''}`}
                   onClick={() => setOrientation('white')}
+                  disabled={isPlaying && aiMode}
                 >
                   <span className="btn-icon">⬜</span>
                   <span className="btn-label">白方视角</span>
@@ -84,12 +233,31 @@ const ChessDemoPage: React.FC = () => {
                 <button
                   className={`orientation-btn ${orientation === 'black' ? 'active' : ''}`}
                   onClick={() => setOrientation('black')}
+                  disabled={isPlaying && aiMode}
                 >
                   <span className="btn-icon">⬛</span>
                   <span className="btn-label">黑方视角</span>
                 </button>
               </div>
             </div>
+
+            {/* New Game Button */}
+            <div className="control-group">
+              <button
+                className="btn btn-primary btn-large"
+                onClick={handleStartNewGame}
+                disabled={isPlaying}
+              >
+                {isPlaying ? '对局进行中...' : aiMode ? '开始 AI 对战' : '开始新对局'}
+              </button>
+            </div>
+
+            {/* AI Thinking Indicator */}
+            {aiMode && aiState.thinking && (
+              <div className="ai-indicator-wrapper">
+                <AIThinkingIndicator thinking={aiState.thinking} orientation={orientation} />
+              </div>
+            )}
           </div>
 
           <div className="control-section">

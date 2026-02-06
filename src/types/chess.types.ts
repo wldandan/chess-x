@@ -150,3 +150,6 @@ export type BoardOrientation = 'white' | 'black';
 
 // 记谱法
 export type Notation = 'san' | 'lan' | 'uci';
+
+// AI 难度级别
+export type DifficultyLevel = 'beginner' | 'easy' | 'medium' | 'hard' | 'expert' | 'master';

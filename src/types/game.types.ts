@@ -1,6 +1,17 @@
 // 对局相关类型定义
 
-import type { ChessMove, PositionEvaluation, TimeControl, AIPlayerConfig, GameResult, PGNMetadata } from './chess.types';
+import type {
+  ChessMove,
+  PositionEvaluation,
+  TimeControl,
+  AIPlayerConfig,
+  GameResult,
+  PGNMetadata,
+  TacticalOpportunity
+} from './chess.types';
+
+// Re-export commonly used types
+export type { ChessMove, PositionEvaluation, TimeControl, AIPlayerConfig, GameResult, PGNMetadata, TacticalOpportunity };
 
 // 对局配置
 export interface GameConfig {

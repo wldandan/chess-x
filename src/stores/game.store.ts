@@ -7,7 +7,7 @@ import type {
   GameStoreActions,
 } from '../types/store.types';
 import type { GameConfig, ChessGame, GameFilter } from '../types/game.types';
-import type { ChessMove } from '../types/chess.types';
+import { getAIEngine, disposeAIEngine, type DifficultyLevel, type ThinkingState } from '../services/ai/ChessAIEngine';
 
 // 初始状态
 const initialState: GameStoreState = {
@@ -34,6 +34,11 @@ const initialState: GameStoreState = {
   },
   totalGames: 0,
 
+  // AI 对战状态
+  aiDifficulty: 'medium' as DifficultyLevel,
+  aiThinking: null as ThinkingState | null,
+  aiEngineReady: false,
+
   // 操作状态
   isAnalyzing: false,
   isExporting: false,
@@ -46,11 +51,37 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
       (set, get) => ({
         ...initialState,
 
+        // 初始化AI引擎
+        initializeAI: async () => {
+          try {
+            const engine = getAIEngine();
+            await engine.initialize();
+            set({ aiEngineReady: true });
+          } catch (error) {
+            console.error('Failed to initialize AI engine:', error);
+            set({
+              error: error instanceof Error ? error.message : 'Failed to initialize AI engine'
+            });
+          }
+        },
+
+        // 设置AI难度
+        setAIDifficulty: (difficulty: DifficultyLevel) => {
+          const engine = getAIEngine();
+          engine.setDifficulty(difficulty);
+          set({ aiDifficulty: difficulty });
+        },
+
         // 对局操作
         startGame: async (config: GameConfig) => {
           set({ loading: true, error: null });
 
           try {
+            // 确保AI引擎已初始化
+            if ((config.whitePlayer.type === 'ai' || config.blackPlayer.type === 'ai') && !get().aiEngineReady) {
+              await get().initializeAI();
+            }
+
             // 创建新对局
             const newGame: ChessGame = {
               id: `game_${Date.now()}`,
@@ -61,13 +92,13 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
                 date: new Date().toISOString().split('T')[0],
                 white: config.whitePlayer.name,
                 black: config.blackPlayer.name,
-                result: '*', // 进行中
+                result: '*',
               },
               fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
               pgn: '',
               moves: [],
               positionEvaluations: [],
-              status: 'starting',
+              status: 'in_progress',
               currentTurn: 'white',
               moveNumber: 1,
               startTime: new Date(),
@@ -89,9 +120,8 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
               lastUpdated: new Date(),
             });
 
-            // 如果是AI对局，开始AI思考
-            if (config.blackPlayer.type === 'ai') {
-              // 延迟执行AI思考
+            // 如果是AI先行，开始AI思考
+            if (config.whitePlayer.type === 'ai') {
               setTimeout(() => {
                 get().processAIMove();
               }, 500);
@@ -151,12 +181,14 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
             // 检查游戏是否结束
             if (chess.isGameOver()) {
               get().endGame(updatedGame);
-            } else if (updatedGame.currentTurn === 'black' &&
-                      currentGame.config.blackPlayer.type === 'ai') {
-              // AI回合
-              setTimeout(() => {
-                get().processAIMove();
-              }, 500);
+            } else {
+              // 检查是否需要AI走子
+              const nextPlayer = updatedGame.currentTurn === 'white' ? updatedGame.config.whitePlayer : updatedGame.config.blackPlayer;
+              if (nextPlayer.type === 'ai') {
+                setTimeout(() => {
+                  get().processAIMove();
+                }, 500);
+              }
             }
 
             return true;
@@ -166,6 +198,52 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
               error: error instanceof Error ? error.message : 'Invalid move',
             });
             return false;
+          }
+        },
+
+        // 处理AI走子
+        processAIMove: async () => {
+          const { currentGame, aiDifficulty } = get();
+          if (!currentGame || currentGame.status !== 'in_progress') {
+            return;
+          }
+
+          // 确定当前是哪方AI
+          const currentTurn = currentGame.currentTurn;
+          const playerConfig = currentTurn === 'white' ? currentGame.config.whitePlayer : currentGame.config.blackPlayer;
+
+          if (playerConfig.type !== 'ai') {
+            return;
+          }
+
+          try {
+            set({ aiThinking: { isThinking: true, depth: 0, evaluation: 0, currentMove: '' } });
+
+            const engine = getAIEngine();
+            engine.setDifficulty(aiDifficulty);
+
+            // 获取AI最佳走法
+            const analysis = await engine.getBestMove(currentGame.fen, { difficulty: aiDifficulty });
+
+            // 设置思考回调（可选，用于实时更新）
+            engine.setThinkingCallback((state: ThinkingState) => {
+              set({ aiThinking: state });
+            });
+
+            // 执行AI走子
+            const success = await get().makeMove(analysis.bestMove);
+
+            set({ aiThinking: null });
+
+            if (!success) {
+              throw new Error('AI failed to make move');
+            }
+          } catch (error) {
+            console.error('AI move error:', error);
+            set({
+              error: error instanceof Error ? error.message : 'AI failed to make move',
+              aiThinking: null,
+            });
           }
         },
 
@@ -319,11 +397,41 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
           set({ isAnalyzing: true, error: null });
 
           try {
-            // 这里应该集成Stockfish分析
-            console.log(`Analyzing game: ${gameId}`);
+            // 使用Stockfish分析对局
+            const { gameHistory } = get();
+            const game = gameHistory.find(g => g.id === gameId);
 
-            // 模拟分析过程
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (!game) {
+              throw new Error('Game not found');
+            }
+
+            const engine = getAIEngine();
+
+            // 分析每个关键局面
+            const chess = new Chess();
+            const analyses: any[] = [];
+
+            for (const move of game.moves) {
+              chess.move(move.san);
+              const analysis = await engine.getBestMove(chess.fen(), { depth: 10 });
+              analyses.push({
+                moveNumber: analyses.length + 1,
+                move: move.san,
+                fen: chess.fen(),
+                evaluation: analysis.evaluation,
+                bestMove: analysis.bestMove,
+                pv: analysis.pv,
+              });
+            }
+
+            // 更新游戏的分析结果
+            const updatedGame = {
+              ...game,
+              positionEvaluations: analyses,
+            };
+
+            // 保存更新后的游戏
+            await get().saveGame(updatedGame);
 
             set({ isAnalyzing: false, lastUpdated: new Date() });
           } catch (error) {
@@ -403,23 +511,6 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
           }
         },
 
-        // 辅助方法
-        processAIMove: () => {
-          const { currentGame } = get();
-          if (!currentGame || currentGame.config.blackPlayer.type !== 'ai') {
-            return;
-          }
-
-          // 简单AI：随机走子
-          const chess = new Chess(currentGame.fen);
-          const moves = chess.moves();
-
-          if (moves.length > 0) {
-            const randomMove = moves[Math.floor(Math.random() * moves.length)];
-            get().makeMove(randomMove);
-          }
-        },
-
         endGame: (game: ChessGame) => {
           const chess = new Chess(game.fen);
           let result: ChessGame['result'];
@@ -456,6 +547,12 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
 
           get().saveGame(finishedGame);
         },
+
+        // 清理AI引擎
+        cleanupAI: () => {
+          disposeAIEngine();
+          set({ aiEngineReady: false, aiThinking: null });
+        },
       }),
       {
         name: 'chess-game-store',
@@ -465,6 +562,7 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
           gameHistory: state.gameHistory,
           gameFilter: state.gameFilter,
           totalGames: state.totalGames,
+          aiDifficulty: state.aiDifficulty,
         }),
       }
     ),
@@ -482,3 +580,8 @@ export const useGameStatus = () => useGameStore((state) => state.gameStatus);
 export const useIsPlaying = () => useGameStore((state) => state.isPlaying);
 export const useGameLoading = () => useGameStore((state) => state.loading);
 export const useGameError = () => useGameStore((state) => state.error);
+export const useAIState = () => useGameStore((state) => ({
+  difficulty: state.aiDifficulty,
+  thinking: state.aiThinking,
+  isReady: state.aiEngineReady,
+}));

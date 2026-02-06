@@ -3,6 +3,7 @@
 import type { ChessGame, GameConfig, GameFilter } from './game.types';
 import type { TrainingSession, TrainingExercise, TrainingProgress } from './training.types';
 import type { User, UserSettings } from './user.types';
+import type { DifficultyLevel } from './chess.types';
 
 // Store状态基类
 export interface BaseStoreState {
@@ -25,6 +26,16 @@ export interface GameStoreState extends BaseStoreState {
   // 过滤和分页
   gameFilter: GameFilter;
   totalGames: number;
+
+  // AI 对战状态
+  aiDifficulty: DifficultyLevel;
+  aiThinking: {
+    isThinking: boolean;
+    depth: number;
+    evaluation: number;
+    currentMove: string;
+  } | null;
+  aiEngineReady: boolean;
 
   // 操作状态
   isAnalyzing: boolean;
@@ -121,6 +132,13 @@ export interface GameStoreActions {
   resign: () => Promise<void>;
   offerDraw: () => Promise<void>;
   requestTakeback: () => Promise<void>;
+
+  // AI 操作
+  initializeAI: () => Promise<void>;
+  setAIDifficulty: (difficulty: DifficultyLevel) => void;
+  processAIMove: () => Promise<void>;
+  cleanupAI: () => void;
+  endGame: (game: ChessGame) => void;
 
   // 对局管理
   loadGame: (gameId: string) => Promise<void>;

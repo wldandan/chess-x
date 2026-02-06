@@ -2202,3 +2202,130 @@
   font-size: 0.7rem;
   font-weight: 600;
 }
+/* ========================================
+   AI 思考指示器样式
+   ======================================== */
+
+.ai-thinking-indicator {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  box-shadow: var(--box-shadow);
+  border: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-lg);
+}
+
+.thinking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.thinking-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--secondary-color);
+  font-weight: 500;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--secondary-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.thinking-depth {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.current-move {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.evaluation-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+}
+
+.eval-label {
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.eval-value {
+  font-weight: 600;
+  font-size: 1.1rem;
+  font-family: 'Courier New', monospace;
+}
+
+.evaluation-bar-container {
+  margin-top: var(--spacing-sm);
+}
+
+.eval-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.scale-label {
+  padding: 0 4px;
+}
+
+.evaluation-track {
+  position: relative;
+  height: 24px;
+  background: linear-gradient(90deg, #2c3e50, #3498db, #bdc3c7, #e74c3c, #2c3e50);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.evaluation-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.evaluation-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: left 0.3s ease, background-color 0.3s ease;
+  z-index: 1;
+}

@@ -7,21 +7,9 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: chess-db
-          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.11
       - key: APP_ENV
         value: production
-      - key: CORS_ORIGINS
-        value: https://*.vercel.app,http://localhost:3000
     healthCheckPath: /health
     autoDeploy: true
-
-databases:
-  # PostgreSQL数据库
-  - name: chess-db
-    plan: free
-    databaseName: chess_db
-    user: chess_user
-    ipAllowList: []  # 允许所有IP连接（生产环境应限制）

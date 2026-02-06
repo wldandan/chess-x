@@ -9,8 +9,11 @@ app = FastAPI(title="Aaron Chess API", version="1.0.0")
 # CORS配置 - 允许前端访问
 origins = [
     "http://localhost:3000",
+    "http://localhost:3001",
     "http://localhost:5173",
     "https://*.vercel.app",
+    "https://*.onrender.com",
+    "https://aaron-chess-frontend.onrender.com",
     # 生产环境的前端域名可以在这里添加
 ]
 
