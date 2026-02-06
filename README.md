@@ -1,6 +1,6 @@
 # Aaron Chess - 国际象棋比赛训练应用
 
-[![CI](https://github.com/your-username/aaron-chess/actions/workflows/test.yml/badge.svg)](https://github.com/your-username/aaron-chess/actions/workflows/test.yml)
+[![CI](https://github.com/wldandan/chess-x/actions/workflows/test.yml/badge.svg)](https://github.com/wldandan/chess-x/actions/workflows/test.yml)
 [![Vercel](https://img.shields.io/badge/deployed%20on-Vercel-black?logo=vercel)](https://vercel.com)
 [![Render](https://img.shields.io/badge/backend-Render-blue?logo=render)](https://render.com)
 [![FastAPI](https://img.shields.io/badge/backend-FastAPI-green?logo=fastapi)](https://fastapi.tiangolo.com)
