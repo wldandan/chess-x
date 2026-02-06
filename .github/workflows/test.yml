@@ -83,3 +83,18 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
+
+  # 触发部署（仅在main分支，所有测试通过后）
+  trigger-deploy:
+    name: Trigger Deploy
+    needs: [type-check, lint, unit-test, e2e-test, build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy workflow triggered
+        run: |
+          echo "✅ All tests passed!"
+          echo "🚀 Deployment will be triggered automatically"
+          gh workflow run deploy.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

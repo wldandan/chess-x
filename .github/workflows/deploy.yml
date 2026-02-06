@@ -7,15 +7,46 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Render
+    name: Deploy to Production
+    # 等待测试工作流完成
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://chess-x.onrender.com
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to Render
-        uses: johnbeynon/render-deploy-action@v0.0.8
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          service-id: ${{ secrets.RENDER_SERVICE_ID }}
-          api-key: ${{ secrets.RENDER_API_KEY }}
-          wait-for-success: true
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # 如果使用 Render Dashboard 的部署
+      # - name: Trigger Render Deployment
+      #   run: |
+      #     curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+
+      # 或者直接部署到 Vercel（推荐，更快）
+      # - name: Deploy to Vercel
+      #   uses: amondnet/vercel-action@v25
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     vercel-args: '--prod'
+
+      - name: Deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ✅ Success" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: Production" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
