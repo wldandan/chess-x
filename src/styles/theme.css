@@ -40,17 +40,17 @@
   --accent-color: #fbbf24;
 } */
 
-/* ========== 当前使用：清新活力配色 ========== */
+/* ========== 当前使用：活力橙配色 ========== */
 :root {
   /* 主色调 */
   --primary-color: #1e293b;
   --primary-light: #334155;
   --primary-dark: #0f172a;
 
-  /* 辅助色 - 鲜亮翠绿色 */
-  --secondary-color: #10b981;
-  --secondary-hover: #059669;
-  --accent-color: #fbbf24;
+  /* 辅助色 - 活力橙色 */
+  --secondary-color: #f97316;
+  --secondary-hover: #ea580c;
+  --accent-color: #fcd34d;
 
   /* 功能色优化 */
   --success-color: #22c55e;
@@ -85,7 +85,7 @@
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 4px 20px rgba(16, 185, 129, 0.4);
+  --shadow-glow: 0 4px 20px rgba(249, 115, 22, 0.4);
 
   /* 圆角 */
   --radius-sm: 4px;
