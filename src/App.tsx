@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage'
 import ChessDemoPage from './pages/ChessDemoPage'
 import AnalysisPage from './pages/AnalysisPage'
 import TrainingPage from './pages/TrainingPage'
+import { TrainingSetupPage } from './pages/TrainingSetupPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/demo" element={<ChessDemoPage />} />
           <Route path="/analysis" element={<AnalysisPage />} />
           <Route path="/training" element={<TrainingPage />} />
+          <Route path="/training-setup" element={<TrainingSetupPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
