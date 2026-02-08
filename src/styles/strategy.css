@@ -1,0 +1,370 @@
+/* 策略训练页面样式 */
+
+.strategy-training-page {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.strategy-training-page.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+/* 页眉 */
+.page-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  background: linear-gradient(135deg, var(--secondary-color), var(--info-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 训练模式选择器 */
+.training-mode-selector {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border: 1px solid var(--border-color);
+}
+
+.mode-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.mode-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--bg-secondary);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-tab:hover {
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+
+.mode-tab.active {
+  background: var(--secondary-color);
+  color: white;
+  border-color: var(--secondary-color);
+  box-shadow: var(--shadow-glow);
+}
+
+.mode-tab.active .tab-icon {
+  color: white;
+}
+
+.tab-icon {
+  font-size: 20px;
+}
+
+/* 主要内容区 */
+.strategy-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  min-height: 600px;
+}
+
+@media (max-width: 1024px) {
+  .strategy-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 棋盘区域 */
+.strategy-board-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.exercise-info {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.exercise-title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  color: var(--text-primary);
+}
+
+.exercise-description {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.exercise-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.exercise-tags .tag {
+  background: rgba(129, 182, 76, 0.1);
+  color: var(--secondary-color);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  border: 1px solid rgba(129, 182, 76, 0.3);
+}
+
+/* 面板区域 */
+.strategy-panel-section {
+  min-height: 600px;
+}
+
+/* 战略概念库部分 */
+.strategic-concepts-section {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 1px solid var(--border-color);
+}
+
+/* 反馈覆盖层 */
+.feedback-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.feedback-content {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+}
+
+.feedback-correct .feedback-content {
+  border-color: var(--success-color);
+}
+
+.feedback-partial .feedback-content {
+  border-color: var(--warning-color);
+}
+
+.feedback-incorrect .feedback-content {
+  border-color: var(--danger-color);
+}
+
+.feedback-title {
+  margin: 0 0 16px 0;
+  font-size: 24px;
+}
+
+.feedback-correct .feedback-title {
+  color: var(--success-color);
+}
+
+.feedback-partial .feedback-title {
+  color: var(--warning-color);
+}
+
+.feedback-incorrect .feedback-title {
+  color: var(--danger-color);
+}
+
+.feedback-message {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.feedback-details {
+  margin: 0 0 24px 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.feedback-details li {
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.feedback-details li:last-child {
+  margin-bottom: 0;
+}
+
+/* 控制按钮 */
+.strategy-controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.strategy-controls .btn {
+  min-width: 120px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .strategy-training-page {
+    padding: 16px;
+    gap: 24px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  .mode-tabs {
+    flex-direction: column;
+  }
+
+  .mode-tab {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .strategy-content {
+    gap: 24px;
+  }
+
+  .strategy-controls {
+    flex-direction: column;
+  }
+
+  .strategy-controls .btn {
+    width: 100%;
+  }
+}
+
+/* 棋盘组件自定义样式 */
+.strategy-board-container {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1px solid var(--border-color);
+}
+
+/* 评估面板自定义样式 */
+.position-evaluation-panel,
+.plan-generation-panel,
+.decision-training-panel,
+.strategic-concepts-library {
+  max-height: 600px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) var(--bg-tertiary);
+}
+
+.position-evaluation-panel::-webkit-scrollbar,
+.plan-generation-panel::-webkit-scrollbar,
+.decision-training-panel::-webkit-scrollbar,
+.strategic-concepts-library::-webkit-scrollbar {
+  width: 8px;
+}
+
+.position-evaluation-panel::-webkit-scrollbar-track,
+.plan-generation-panel::-webkit-scrollbar-track,
+.decision-training-panel::-webkit-scrollbar-track,
+.strategic-concepts-library::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+.position-evaluation-panel::-webkit-scrollbar-thumb,
+.plan-generation-panel::-webkit-scrollbar-thumb,
+.decision-training-panel::-webkit-scrollbar-thumb,
+.strategic-concepts-library::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.position-evaluation-panel::-webkit-scrollbar-thumb:hover,
+.plan-generation-panel::-webkit-scrollbar-thumb:hover,
+.decision-training-panel::-webkit-scrollbar-thumb:hover,
+.strategic-concepts-library::-webkit-scrollbar-thumb:hover {
+  background: var(--border-light);
+}
+
+/* 加载动画 */
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--secondary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: 16px;
+  font-size: 14px;
+}

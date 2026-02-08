@@ -39,7 +39,7 @@
   font-size: 2.75rem;
   font-weight: 800;
   margin-bottom: var(--space-2);
-  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-hover) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -126,6 +126,13 @@
   margin: 0 auto;
   padding: var(--space-8) var(--space-6);
   width: 100%;
+}
+
+/* 首页的特殊样式 */
+.main-content.home-page {
+  max-width: none;
+  padding: 0;
+  margin: 0;
 }
 
 /* Footer 优化 */

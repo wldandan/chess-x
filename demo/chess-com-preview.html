@@ -106,29 +106,36 @@
       gap: 15px;
     }
 
-    .nav-btn {
+    .navbar .nav-btn {
       background: var(--chess-green);
       color: var(--text-primary);
       border: none;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border-radius: 8px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.15s;
+      box-shadow: 0 4px 12px rgba(129, 182, 76, 0.4);
     }
 
-    .nav-btn:hover {
+    .navbar .nav-btn:hover {
       background: var(--chess-green-dark);
     }
 
-    .nav-btn-secondary {
+    .navbar .nav-btn-secondary {
       background: transparent;
-      border: 2px solid var(--chess-green);
+      border: 4px solid var(--chess-green-light);
+      color: var(--chess-green-light);
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(155, 214, 104, 0.5);
     }
 
-    .nav-btn-secondary:hover {
+    .navbar .nav-btn-secondary:hover {
       background: var(--chess-green);
+      border-color: var(--chess-green);
+      color: var(--text-primary);
+      text-shadow: none;
     }
 
     /* ========== 主布局 ========== */
@@ -168,12 +175,13 @@
       flex: 1;
       position: relative;
       z-index: 1;
+      text-align: left;
     }
 
     .hero-badge {
       display: inline-block;
-      background: rgba(129, 182, 76, 0.15);
-      color: var(--chess-green-light);
+      background: #000000;
+      color: white;
       padding: 6px 14px;
       border-radius: 20px;
       font-size: 13px;
@@ -567,7 +575,7 @@
       </div>
       <div class="nav-right">
         <button class="nav-btn nav-btn-secondary">登录</button>
-        <button class="nav-btn">免费注册</button>
+        <button class="nav-btn">注册</button>
       </div>
     </nav>
 
@@ -693,7 +701,7 @@
           <h2 class="cta-title">准备好开始你的象棋之旅了吗？</h2>
           <p class="cta-text">加入超过10,000名青少年棋手，一起在Aaron Chess提升棋艺，享受国际象棋的乐趣</p>
           <div class="cta-buttons">
-            <button class="btn-cta">免费注册</button>
+            <button class="btn-cta">注册</button>
             <button class="btn-cta btn-cta-secondary">了解更多</button>
           </div>
         </div>

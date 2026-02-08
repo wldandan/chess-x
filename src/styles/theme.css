@@ -1,60 +1,32 @@
 /* 配色方案选择 - 解除注释即可使用 */
 
-/* 方案 1: 清新自然绿 ⭐️ 推荐 */
-/* :root {
-  --primary-color: #1a1a1a;
-  --secondary-color: #10b981; /* 鲜亮翠绿 */
-  --secondary-hover: #059669;
-  --accent-color: #fbbf24;
-} */
-
-/* 方案 2: 现代蓝紫色 */
-/* :root {
-  --primary-color: #1e293b;
-  --secondary-color: #6366f1; /* 蓝紫色 */
-  --secondary-hover: #4f46e5;
-  --accent-color: #a78bfa;
-} */
-
-/* 方案 3: 活力橙红 */
-/* :root {
-  --primary-color: #1f2937;
-  --secondary-color: #f97316; /* 活力橙 */
-  --secondary-hover: #ea580c;
-  --accent-color: #fcd34d;
-} */
-
-/* 方案 4: 专业深蓝 */
-/* :root {
-  --primary-color: #0f172a;
-  --secondary-color: #3b82f6; /* 亮蓝色 */
-  --secondary-hover: #2563eb;
-  --accent-color: #60a5fa;
-} */
-
-/* 方案 5: 棋盘经典 */
-/* :root {
-  --primary-color: #1e293b;
-  --secondary-color: #059669; /* 经典棋盘绿 */
-  --secondary-hover: #047857;
-  --accent-color: #fbbf24;
-} */
-
-/* ========== 当前使用：清新绿配色 ========== */
+/* ========== chess.com 官方配色 ========== */
 :root {
-  /* 主色调 */
-  --primary-color: #1e293b;
-  --primary-light: #334155;
-  --primary-dark: #0f172a;
+  /* chess.com 官方配色变量 - 与chess-com-preview.html完全一致 */
+  --bg-primary: #302e2b;
+  --bg-secondary: #262421;
+  --bg-tertiary: #464542;
+  --bg-card: #403e3b;
+  --chess-green: #81b64c;
+  --chess-green-dark: #6a9a3a;
+  --chess-green-light: #9bd668;
+  --text-primary: #ffffff;
+  --text-secondary: #bababa;
+  --text-muted: #7d7d7d;
+  --border-color: #464542;
+  --shadow: rgba(0, 0, 0, 0.3);
 
-  /* 辅助色 - 清新绿色 */
-  --secondary-color: #34d399;
-  --secondary-hover: #10b981;
+  /* 兼容性变量 - 映射到chess.com官方变量 */
+  --primary-color: var(--bg-primary);
+  --primary-light: var(--bg-tertiary);
+  --primary-dark: var(--bg-secondary);
+  --secondary-color: var(--chess-green);
+  --secondary-hover: var(--chess-green-dark);
   --accent-color: #fbbf24;
 
   /* 功能色优化 */
-  --success-color: #22c55e;
-  --success-light: #4ade80;
+  --success-color: #81b64c;
+  --success-light: #9bd668;
   --warning-color: #f59e0b;
   --warning-light: #fbbf24;
   --danger-color: #ef4444;
@@ -62,30 +34,26 @@
   --info-color: #3b82f6;
   --info-light: #60a5fa;
 
-  /* 背景色 */
-  --bg-primary: #fafafa;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f3f4f6;
-  --bg-dark: #1e293b;
 
-  /* 文字色 */
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --text-tertiary: #94a3b8;
+  /* 文字色 - 与chess-com-preview.html完全一致 */
+  --text-primary: #ffffff;
+  --text-secondary: #bababa;
+  --text-tertiary: #7d7d7d;
   --text-light: #ffffff;
-  --text-muted: #cbd5e1;
+  --text-muted: #7d7d7d;
 
   /* 边框色 */
-  --border-color: #e2e8f0;
-  --border-light: #f1f5f9;
-  --border-dark: #cbd5e1;
+  --border-color: #464542;
+  --border-light: #545454;
+  --border-dark: #363636;
 
   /* 阴影优化 */
+  --shadow: rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 4px 20px rgba(52, 211, 153, 0.4);
+  --shadow-glow: 0 4px 20px rgba(129, 182, 76, 0.4);
 
   /* 圆角 */
   --radius-sm: 4px;
@@ -114,5 +82,561 @@
   --header-height: 70px;
   --navbar-height: 60px;
   --footer-height: 60px;
-  --container-max: 1280px;
+  --container-max: 1200px;
+}
+
+/* ========== chess.com 风格全局样式 ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== 顶部导航栏 ========== */
+.navbar {
+  background: var(--bg-secondary);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.logo-icon {
+  font-size: 32px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 5px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+
+.nav-link:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.nav-link.active {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.navbar .nav-btn {
+  background: var(--chess-green);
+  color: var(--text-primary);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 4px 12px rgba(129, 182, 76, 0.4);
+}
+
+.navbar .nav-btn:hover {
+  background: var(--chess-green-dark);
+}
+
+.navbar .nav-btn-secondary {
+  background: transparent;
+  border: 4px solid var(--chess-green-light);
+  color: var(--chess-green-light);
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(155, 214, 104, 0.5);
+}
+
+.navbar .nav-btn-secondary:hover {
+  background: var(--chess-green);
+  border-color: var(--chess-green);
+  color: var(--text-primary);
+  text-shadow: none;
+}
+
+/* ========== 主布局 ========== */
+.main-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 20px;
+  background-color: transparent;
+}
+
+/* ========== Hero 区域 ========== */
+.hero-section {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a1a1a 100%);
+  border-radius: 16px;
+  padding: 60px 40px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+}
+
+.hero-content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  text-align: left;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: #000000;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+
+.hero-title .highlight {
+  color: var(--chess-green);
+}
+
+.hero-subtitle {
+  color: var(--text-secondary);
+  font-size: 18px;
+  margin-bottom: 30px;
+  max-width: 480px;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 14px;
+}
+
+.btn-hero {
+  background: var(--chess-green);
+  color: var(--text-primary);
+  border: none;
+  padding: 16px 32px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-hero:hover {
+  background: var(--chess-green-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(129, 182, 76, 0.4);
+}
+
+.btn-hero-secondary {
+  background: transparent;
+  border: 2px solid var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.btn-hero-secondary:hover {
+  border-color: var(--chess-green);
+  background: rgba(129, 182, 76, 0.1);
+}
+
+.hero-board {
+  width: 400px;
+  height: 400px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+/* ========== 共享样式 ========== */
+.section-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.section-subtitle {
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+/* ========== 快速开始卡片 ========== */
+.quick-start-section {
+  margin-bottom: 30px;
+}
+
+.quick-start-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.quick-start-card {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.quick-start-card:hover {
+  border-color: var(--chess-green);
+  background: var(--bg-card);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.quick-start-icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+}
+
+.quick-start-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.quick-start-card p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* ========== 数据展示 ========== */
+.stats-section {
+  background: linear-gradient(135deg, var(--bg-secondary), #1a1a1a);
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+
+.stat-item {
+  padding: 20px;
+}
+
+.stat-value {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--chess-green);
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+/* ========== 用户评价 ========== */
+.testimonials-section {
+  margin-bottom: 30px;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.testimonial-card {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.testimonial-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.testimonial-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.testimonial-name {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.testimonial-title {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.testimonial-text {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.testimonial-rating {
+  color: var(--chess-green);
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+/* ========== CTA 区域 ========== */
+.cta-section {
+  background: linear-gradient(135deg, var(--chess-green), var(--chess-green-dark));
+  border-radius: 16px;
+  padding: 50px;
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.cta-content {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.cta-text {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 30px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+}
+
+.btn-cta {
+  background: white;
+  color: var(--chess-green);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-cta-secondary {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+}
+
+/* ========== 底部 ========== */
+.footer {
+  background: var(--bg-secondary);
+  padding: 40px 20px;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+}
+
+.footer-links {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+
+.footer-links a:hover {
+  color: var(--chess-green);
+}
+
+.footer-copyright {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ========== 动画类 ========== */
+.animate-fade-in {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+.animate-slide-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* 响应式 */
+@media (max-width: 1024px) {
+  .quick-start-grid,
+  .testimonials-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 30px;
+  }
+
+  .hero-board {
+    width: 320px;
+    height: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .quick-start-grid,
+  .testimonials-grid,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 15px;
+  }
 }

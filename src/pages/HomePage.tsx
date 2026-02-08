@@ -308,6 +308,14 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </div>
+        <div className="hero-board">
+          {/* Chess.com 官方动图 */}
+          <img
+            src="https://assets-configurator.chess.com/image/configurator/chessboard_1768166350728.gif"
+            alt="Chess.com Animated Board"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        </div>
       </section>
 
       {/* 平衡内容区域 */}

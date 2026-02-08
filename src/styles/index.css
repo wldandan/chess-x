@@ -1,18 +1,21 @@
 /* 全局样式 - 优化版 */
 :root {
-  /* 主色调 - 深色系 */
-  --primary-color: #1e293b;
-  --primary-light: #334155;
-  --primary-dark: #0f172a;
+  /* 主色调 - chess.com深色系 */
+  --primary-color: #302e2b;
+  --primary-light: #464542;
+  --primary-dark: #262421;
 
-  /* 辅助色 - 清新绿色 */
-  --secondary-color: #34d399;
-  --secondary-hover: #10b981;
+  /* 辅助色 - chess.com标志性绿色 */
+  --secondary-color: #81b64c;
+  --secondary-hover: #6a9a3a;
   --accent-color: #fbbf24;
+  --chess-green: var(--secondary-color);
+  --chess-green-dark: var(--secondary-hover);
+  --chess-green-light: var(--success-light);
 
-  /* 功能色优化 */
-  --success-color: #22c55e;
-  --success-light: #4ade80;
+  /* 功能色优化 - chess.com风格 */
+  --success-color: #81b64c;
+  --success-light: #9bd668;
   --warning-color: #f59e0b;
   --warning-light: #fbbf24;
   --danger-color: #ef4444;
@@ -20,30 +23,32 @@
   --info-color: #3b82f6;
   --info-light: #60a5fa;
 
-  /* 背景色 */
-  --bg-primary: #fafafa;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f3f4f6;
-  --bg-dark: #1e293b;
+  /* 背景色 - chess.com配色 */
+  --bg-primary: #302e2b;
+  --bg-secondary: #262421;
+  --bg-tertiary: #464542;
+  --bg-card: #403e3b;
+  --bg-dark: #262421;
 
-  /* 文字色 */
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --text-tertiary: #94a3b8;
+  /* 文字色 - chess.com配色 */
+  --text-primary: #ffffff;
+  --text-secondary: #bababa;
+  --text-tertiary: #7d7d7d;
   --text-light: #ffffff;
-  --text-muted: #cbd5e1;
+  --text-muted: #7d7d7d;
 
-  /* 边框色 */
-  --border-color: #e2e8f0;
-  --border-light: #f1f5f9;
-  --border-dark: #cbd5e1;
+  /* 边框色 - chess.com配色 */
+  --border-color: #464542;
+  --border-light: #545454;
+  --border-dark: #363636;
 
-  /* 阴影优化 */
+  /* 阴影优化 - chess.com配色 */
+  --shadow: rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 4px 20px rgba(52, 211, 153, 0.4);
+  --shadow-glow: 0 4px 20px rgba(129, 182, 76, 0.4);
 
   /* 圆角 */
   --radius-sm: 4px;
@@ -75,17 +80,17 @@
   --container-max: 1280px;
 }
 
-/* 深色主题变量 */
+/* 深色主题变量 - chess.com已经是深色主题，所以保持一致 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-tertiary: #94a3b8;
-    --border-color: #334155;
-    --border-light: #1e293b;
+    --bg-primary: #302e2b;
+    --bg-secondary: #262421;
+    --bg-tertiary: #464542;
+    --text-primary: #ffffff;
+    --text-secondary: #bababa;
+    --text-tertiary: #7d7d7d;
+    --border-color: #464542;
+    --border-light: #545454;
   }
 }
 
@@ -104,12 +109,12 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.5;
   overflow-x: hidden;
 }
 
@@ -179,6 +184,16 @@ button:disabled {
   pointer-events: none;
 }
 
+/* Code 标签优化 - 移除默认白色背景 */
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875em;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
 /* 输入框优化 */
 input,
 select,
@@ -200,7 +215,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--secondary-color);
-  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
+  box-shadow: 0 0 0 3px rgba(129, 182, 76, 0.15);
 }
 
 input::placeholder,
