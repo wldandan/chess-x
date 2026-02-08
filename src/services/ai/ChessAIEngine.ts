@@ -3,7 +3,8 @@
  * Provides AI opponent functionality with different difficulty levels
  */
 
-import type { DifficultyLevel } from '../../types/chess.types';
+import type { DifficultyLevel, AIPlayerProfile, StyleParameters } from '../../types/chess.types';
+import { PlayerStyleEngine } from './PlayerStyleEngine';
 
 // Re-export for convenience
 export type { DifficultyLevel };
@@ -266,6 +267,116 @@ export class ChessAIEngine {
    */
   ready(): boolean {
     return this.isReady
+  }
+
+  /**
+   * Get best move with style-specific configuration
+   * Uses AI player profile to generate style-appropriate moves
+   * @param fen FEN string of position
+   * @param profile AI player profile
+   * @param currentElo Current ELO for adaptive difficulty
+   * @returns Position analysis with best move
+   */
+  async getBestMoveWithStyle(
+    fen: string,
+    profile: AIPlayerProfile,
+    currentElo?: number
+  ): Promise<PositionAnalysis> {
+    if (!this.worker || !this.isReady) {
+      await this.initialize()
+    }
+
+    // Detect position type from FEN
+    const positionType = PlayerStyleEngine.detectPositionType(fen)
+
+    // Get Stockfish config for player profile
+    const stockfishConfig = PlayerStyleEngine.getConfigForPlayer(
+      profile,
+      currentElo || profile.elo,
+      positionType
+    )
+
+    // Get UCI commands
+    const uciCommands = PlayerStyleEngine.toUCICommands(stockfishConfig)
+    const searchDepth = PlayerStyleEngine.getSearchDepth(stockfishConfig, positionType)
+    const thinkingTime = PlayerStyleEngine.getThinkingTime(
+      currentElo || profile.elo,
+      profile.styleParams,
+      positionType
+    )
+
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('AI analysis timeout'))
+      }, Math.max(30000, thinkingTime * 2)) // At least 30s or 2x thinking time
+
+      let bestMove = ''
+      let evaluation = 0
+      let pv: string[] = []
+      let finalDepth = 0
+
+      // Set up message handler for this request
+      const messageHandler = (e: MessageEvent) => {
+        const data = e.data
+
+        if (data.startsWith('bestmove')) {
+          const match = data.match(/bestmove (\S+)/)
+          if (match) {
+            bestMove = match[1]
+          }
+
+          const ponderMatch = data.match(/ponder (\S+)/)
+          if (ponderMatch) {
+            pv.push(bestMove, ponderMatch[1])
+          }
+
+          clearTimeout(timeout)
+          this.worker!.removeEventListener('message', messageHandler)
+          resolve({
+            evaluation,
+            bestMove,
+            pv,
+            depth: finalDepth
+          })
+        } else if (data.startsWith('info')) {
+          // Parse final info
+          const depthMatch = data.match(/depth (\d+)/)
+          const scoreMatch = data.match(/score (cp|mate) (-?\d+)/)
+          const pvMatch = data.match(/pv (.+)/)
+
+          if (depthMatch) {
+            finalDepth = parseInt(depthMatch[1])
+          }
+
+          if (scoreMatch) {
+            const type = scoreMatch[1]
+            const value = parseInt(scoreMatch[2])
+            if (type === 'cp') {
+              evaluation = value / 100
+            } else if (type === 'mate') {
+              evaluation = value > 0 ? 100 - value : -100 - value
+            }
+          }
+
+          if (pvMatch) {
+            pv = pvMatch[1].split(' ')
+          }
+        }
+      }
+
+      this.worker!.addEventListener('message', messageHandler)
+
+      // Send position to analyze
+      this.worker!.postMessage(`position fen ${fen}`)
+
+      // Apply UCI commands for style-specific configuration
+      uciCommands.forEach(command => {
+        this.worker!.postMessage(command)
+      })
+
+      // Go for best move with calculated depth and time
+      this.worker!.postMessage(`go depth ${searchDepth} movetime ${thinkingTime}`)
+    })
   }
 
   /**

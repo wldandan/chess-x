@@ -1,9 +1,9 @@
 // 状态管理相关类型定义
 
 import type { ChessGame, GameConfig, GameFilter } from './game.types';
-import type { TrainingSession, TrainingExercise, TrainingProgress } from './training.types';
+import type { TrainingSession, TrainingExercise, TrainingProgress as BaseTrainingProgress } from './training.types';
 import type { User, UserSettings } from './user.types';
-import type { DifficultyLevel } from './chess.types';
+import type { DifficultyLevel, AIPlayerProfile, TrainingSessionConfig, TrainingProgress, AdaptiveDifficultyConfig } from './chess.types';
 
 // Store状态基类
 export interface BaseStoreState {
@@ -36,6 +36,13 @@ export interface GameStoreState extends BaseStoreState {
     currentMove: string;
   } | null;
   aiEngineReady: boolean;
+
+  // AI风格训练状态
+  currentPlayerProfile: AIPlayerProfile | null;
+  trainingSession: TrainingSessionConfig | null;
+  trainingProgress: TrainingProgress | null;
+  playerProfiles: AIPlayerProfile[];
+  adaptiveDifficulty: AdaptiveDifficultyConfig;
 
   // 操作状态
   isAnalyzing: boolean;
@@ -152,6 +159,15 @@ export interface GameStoreActions {
   // 过滤和搜索
   setGameFilter: (filter: GameFilter) => void;
   loadMoreGames: () => Promise<void>;
+
+  // AI风格训练操作
+  selectPlayerProfile: (profileId: string) => void;
+  startTrainingSession: (config: TrainingSessionConfig) => void;
+  endTrainingSession: () => void;
+  updateAdaptiveDifficulty: (performance: 'win' | 'draw' | 'loss', gameQuality?: number) => void;
+  switchToNextStyle: () => void;
+  saveTrainingProgress: () => Promise<void>;
+  loadPlayerProfiles: () => Promise<void>;
 }
 
 export interface TrainingStoreActions {

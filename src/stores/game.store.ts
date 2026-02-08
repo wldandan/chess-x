@@ -7,7 +7,14 @@ import type {
   GameStoreActions,
 } from '../types/store.types';
 import type { GameConfig, ChessGame, GameFilter } from '../types/game.types';
+import type {
+  AIPlayerProfile,
+  TrainingSessionConfig,
+  TrainingProgress,
+  AdaptiveDifficultyConfig
+} from '../types/chess.types';
 import { getAIEngine, disposeAIEngine, type DifficultyLevel, type ThinkingState } from '../services/ai/ChessAIEngine';
+import { playerProfiles as defaultPlayerProfiles } from '../data/playerProfiles';
 
 // 初始状态
 const initialState: GameStoreState = {
@@ -38,6 +45,24 @@ const initialState: GameStoreState = {
   aiDifficulty: 'medium' as DifficultyLevel,
   aiThinking: null as ThinkingState | null,
   aiEngineReady: false,
+
+  // AI风格训练状态
+  currentPlayerProfile: null as AIPlayerProfile | null,
+  trainingSession: null as TrainingSessionConfig | null,
+  trainingProgress: null as TrainingProgress | null,
+  playerProfiles: [] as AIPlayerProfile[],
+  adaptiveDifficulty: {
+    baseElo: 1200,
+    adjustmentRate: 0.3,
+    minElo: 800,
+    maxElo: 2800,
+    performanceThresholds: {
+      win: 0.4,
+      draw: 0.3,
+      loss: 0.6
+    },
+    consistencyThreshold: 0.7
+  } as AdaptiveDifficultyConfig,
 
   // 操作状态
   isAnalyzing: false,
@@ -548,6 +573,212 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
           get().saveGame(finishedGame);
         },
 
+        // ======================
+        // AI风格训练操作
+        // ======================
+
+        // 选择棋手配置
+        selectPlayerProfile: (profileId: string) => {
+          const profile = defaultPlayerProfiles.find(p => p.id === profileId);
+          if (profile) {
+            set({
+              currentPlayerProfile: profile,
+              adaptiveDifficulty: {
+                ...get().adaptiveDifficulty,
+                baseElo: Math.min(Math.max(profile.difficultyRange[0], 1200), profile.difficultyRange[1])
+              }
+            });
+          }
+        },
+
+        // 开始训练会话
+        startTrainingSession: (config: TrainingSessionConfig) => {
+          const { currentPlayerProfile, adaptiveDifficulty } = get();
+
+          if (!currentPlayerProfile) {
+            throw new Error('请先选择棋手配置');
+          }
+
+          const sessionConfig: TrainingSessionConfig = {
+            ...config,
+            startedAt: new Date()
+          };
+
+          const initialProgress: TrainingProgress = {
+            sessionId: `session_${Date.now()}`,
+            playerProfileId: currentPlayerProfile.id,
+            gamesPlayed: 0,
+            gamesWon: 0,
+            gamesDrawn: 0,
+            gamesLost: 0,
+            averageMoves: 0,
+            averageTime: 0,
+            styleAdaptationScore: 50, // 初始50分
+            eloChange: 0,
+            weaknesses: [],
+            strengths: [],
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+
+          set({
+            trainingSession: sessionConfig,
+            trainingProgress: initialProgress,
+            adaptiveDifficulty: {
+              ...adaptiveDifficulty,
+              baseElo: config.targetElo || adaptiveDifficulty.baseElo
+            }
+          });
+        },
+
+        // 结束训练会话
+        endTrainingSession: () => {
+          const { trainingSession, trainingProgress } = get();
+
+          if (trainingSession && trainingProgress) {
+            const completedSession = {
+              ...trainingSession,
+              completedAt: new Date()
+            };
+
+            // 保存训练进度
+            get().saveTrainingProgress();
+
+            set({
+              trainingSession: completedSession,
+              trainingProgress: null
+            });
+          }
+        },
+
+        // 更新自适应难度
+        updateAdaptiveDifficulty: (performance: 'win' | 'draw' | 'loss', gameQuality: number = 0.5) => {
+          const { adaptiveDifficulty, trainingProgress } = get();
+
+          // 基础调整值
+          const baseAdjustments = {
+            win: -50,   // 赢了降低难度
+            draw: 0,    // 平局保持
+            loss: 50    // 输了提高难度
+          };
+
+          // 根据对局质量调整
+          const qualityMultiplier = 1 + (gameQuality - 0.5) * 0.5; // 0.75-1.25
+          const adjustment = Math.round(baseAdjustments[performance] * qualityMultiplier * adaptiveDifficulty.adjustmentRate);
+
+          const newElo = Math.max(
+            adaptiveDifficulty.minElo,
+            Math.min(
+              adaptiveDifficulty.maxElo,
+              adaptiveDifficulty.baseElo + adjustment
+            )
+          );
+
+          // 更新训练进度
+          if (trainingProgress) {
+            const updatedProgress: TrainingProgress = {
+              ...trainingProgress,
+              eloChange: newElo - adaptiveDifficulty.baseElo,
+              updatedAt: new Date()
+            };
+
+            set({
+              adaptiveDifficulty: {
+                ...adaptiveDifficulty,
+                baseElo: newElo
+              },
+              trainingProgress: updatedProgress
+            });
+          } else {
+            set({
+              adaptiveDifficulty: {
+                ...adaptiveDifficulty,
+                baseElo: newElo
+              }
+            });
+          }
+        },
+
+        // 保存训练进度
+        saveTrainingProgress: async () => {
+          const { trainingProgress } = get();
+
+          if (!trainingProgress) {
+            return;
+          }
+
+          set({ loading: true });
+
+          try {
+            // TODO: 这里应该保存到后端API
+            // 目前先保存到localStorage
+            const savedProgress = localStorage.getItem('chess_training_progress');
+            const progressList = savedProgress ? JSON.parse(savedProgress) : [];
+
+            progressList.push({
+              ...trainingProgress,
+              savedAt: new Date()
+            });
+
+            localStorage.setItem('chess_training_progress', JSON.stringify(progressList));
+
+            set({
+              loading: false,
+              lastUpdated: new Date()
+            });
+          } catch (error) {
+            set({
+              loading: false,
+              error: error instanceof Error ? error.message : 'Failed to save training progress'
+            });
+          }
+        },
+
+        // 加载棋手配置
+        loadPlayerProfiles: async () => {
+          set({ loading: true });
+
+          try {
+            // 使用默认配置，未来可以从API加载
+            set({
+              playerProfiles: defaultPlayerProfiles,
+              loading: false,
+              lastUpdated: new Date()
+            });
+          } catch (error) {
+            set({
+              loading: false,
+              error: error instanceof Error ? error.message : 'Failed to load player profiles'
+            });
+          }
+        },
+
+        // 切换到下一个风格（混合模式）
+        switchToNextStyle: () => {
+          const { currentPlayerProfile, playerProfiles } = get();
+
+          if (playerProfiles.length === 0) {
+            return;
+          }
+
+          // 过滤出与当前不同的配置
+          const availableProfiles = playerProfiles.filter(
+            p => p.id !== currentPlayerProfile?.id
+          );
+
+          if (availableProfiles.length === 0) {
+            // 如果只有一个配置，保持当前配置
+            return;
+          }
+
+          // 随机选择一个不同的配置
+          const nextProfile = availableProfiles[Math.floor(Math.random() * availableProfiles.length)];
+
+          set({
+            currentPlayerProfile: nextProfile
+          });
+        },
+
         // 清理AI引擎
         cleanupAI: () => {
           disposeAIEngine();
@@ -563,6 +794,11 @@ export const useGameStore = create<GameStoreState & GameStoreActions>()(
           gameFilter: state.gameFilter,
           totalGames: state.totalGames,
           aiDifficulty: state.aiDifficulty,
+          currentPlayerProfile: state.currentPlayerProfile,
+          trainingSession: state.trainingSession,
+          trainingProgress: state.trainingProgress,
+          playerProfiles: state.playerProfiles,
+          adaptiveDifficulty: state.adaptiveDifficulty,
         }),
       }
     ),
@@ -585,3 +821,18 @@ export const useAIState = () => useGameStore((state) => ({
   thinking: state.aiThinking,
   isReady: state.aiEngineReady,
 }));
+
+// AI风格训练选择器Hooks
+export const useAITrainingState = () => useGameStore((state) => ({
+  currentPlayerProfile: state.currentPlayerProfile,
+  trainingSession: state.trainingSession,
+  trainingProgress: state.trainingProgress,
+  playerProfiles: state.playerProfiles,
+  adaptiveDifficulty: state.adaptiveDifficulty,
+}));
+
+export const useCurrentPlayerProfile = () => useGameStore((state) => state.currentPlayerProfile);
+export const useTrainingSession = () => useGameStore((state) => state.trainingSession);
+export const useTrainingProgress = () => useGameStore((state) => state.trainingProgress);
+export const usePlayerProfiles = () => useGameStore((state) => state.playerProfiles);
+export const useAdaptiveDifficulty = () => useGameStore((state) => state.adaptiveDifficulty);
