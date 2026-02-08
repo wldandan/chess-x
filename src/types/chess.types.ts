@@ -205,8 +205,24 @@ export interface StrengthAnalysis {
   trend: 'improving' | 'stable' | 'declining';
 }
 
-// 训练进度追踪
+// 训练进度追踪 (简化版，用于TrainingReportGenerator)
 export interface TrainingProgress {
+  gamesPlayed: number;
+  gamesWon: number;
+  gamesDrawn: number;
+  gamesLost: number;
+  currentElo: number;
+  startingElo: number;
+  styleAdaptation?: Record<string, number>; // 风格适应度分数映射
+  weaknesses?: Array<{
+    type: string;
+    description: string;
+    count: number;
+  }>;
+}
+
+// 完整训练进度追踪 (原版保留)
+export interface FullTrainingProgress {
   sessionId: string;
   playerProfileId: string;
   gamesPlayed: number;
@@ -281,4 +297,53 @@ export interface TrainingReport {
   }>;
   predictedEloGain: number;
   confidence: number; // 报告置信度 (0-1)
+}
+
+// ======================
+// 训练报告生成器相关类型
+// ======================
+
+// 简化版弱点分析 (用于TrainingReportGenerator)
+export interface SimplifiedWeaknessAnalysis {
+  type: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high';
+  count?: number;
+  affectedStyles?: string[];
+}
+
+// 训练报告 (简化版，用于TrainingReportGenerator)
+export interface TrainingReport {
+  summary: {
+    totalGames: number;
+    record: string;
+    winRate: number;
+    eloChange: number;
+    currentElo: number;
+    startingElo: number;
+  };
+  weaknesses: SimplifiedWeaknessAnalysis[];
+  strengths: Array<{
+    type: string;
+    description: string;
+    score?: number;
+  }>;
+  recommendations: TrainingRecommendation[];
+  styleAnalysis: {
+    bestStyle: { name: string; score: number };
+    worstStyle: { name: string; score: number };
+    averageAdaptation: number;
+    overallAssessment: 'excellent' | 'good' | 'needs-improvement';
+  } | null;
+  timestamp: Date;
+}
+
+// 训练建议
+export interface TrainingRecommendation {
+  type: string;
+  title: string;
+  description: string;
+  targetStyle?: string;
+  priority: 'low' | 'medium' | 'high';
+  estimatedSessions: number;
 }
