@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Chess } from 'chess.js'
+import '../styles/theme.css'
 import '../styles/pages.css'
 import { chessAPI } from '../services/api'
 
@@ -108,9 +110,12 @@ const ChessDemoPage: React.FC = () => {
       setTimeout(() => {
         const moves = game.moves({ verbose: true })
         if (moves.length > 0) {
+          // 使用 PGN 保留历史记录
+          const pgn = game.pgn()
+          const newGame = new Chess()
+          newGame.loadPgn(pgn)
           // 简单 AI：随机走棋
           const randomMove = moves[Math.floor(Math.random() * moves.length)]
-          const newGame = new Chess(game.fen())
           newGame.move(randomMove.san)
           setGame(newGame)
           setHintMove(null)  // 清除提示
@@ -145,7 +150,10 @@ const ChessDemoPage: React.FC = () => {
       // 点击另一个己方棋子，切换选择
       if (clickedPiece && clickedPiece.color === game.turn()) {
         setSelectedSquare(square)
-        setPossibleMoves([])
+        // 计算新选中棋子的合法走法
+        const moves = game.moves({ square: square, verbose: true })
+        const possibleSquares = moves.map(move => move.to as Square)
+        setPossibleMoves(possibleSquares)
         setHintMove(null)  // 清除文字提示，让用户可以重新获取该棋子的提示
         setHintSquares(null)  // 清除棋盘提示
         setHintClickCount(0)  // 重置计数
@@ -153,11 +161,14 @@ const ChessDemoPage: React.FC = () => {
       }
 
       // 尝试走棋
-      const newGame = new Chess(game.fen())
-      const move = newGame.move({ from: selectedSquare, to: square, promotion: 'q' })
+      const pgn = game.pgn()
+      const tempGame = new Chess()
+      tempGame.loadPgn(pgn)
+      const move = tempGame.move({ from: selectedSquare, to: square, promotion: 'q' })
 
       if (move) {
-        setGame(newGame)
+        console.log('走棋成功，历史长度:', tempGame.history().length, '历史:', tempGame.history())
+        setGame(tempGame)
         setSelectedSquare(null)
         setPossibleMoves([])
         setHintMove(null)
@@ -171,10 +182,13 @@ const ChessDemoPage: React.FC = () => {
         setHintClickCount(0)  // 重置计数
       }
     } else {
-      // 没有选中棋子时，选择己方棋子（不显示可行走位置）
+      // 没有选中棋子时，选择己方棋子并显示可行走位置
       if (clickedPiece && clickedPiece.color === game.turn()) {
         setSelectedSquare(square)
-        setPossibleMoves([])
+        // 计算选中棋子的合法走法
+        const moves = game.moves({ square: square, verbose: true })
+        const possibleSquares = moves.map(move => move.to as Square)
+        setPossibleMoves(possibleSquares)
         setHintMove(null)  // 清除提示，让用户可以从棋子提示开始
         setHintSquares(null)
         setHintClickCount(0)  // 重置计数
@@ -183,6 +197,14 @@ const ChessDemoPage: React.FC = () => {
   }
 
   const handleNewGame = () => {
+    // 如果游戏已经开始，显示确认提示
+    if (game.history().length > 0) {
+      const confirmed = window.confirm('是否要放弃当前对局，重新开始？')
+      if (!confirmed) {
+        return
+      }
+    }
+
     setGame(new Chess())
     setSelectedSquare(null)
     setPossibleMoves([])
@@ -293,63 +315,67 @@ const ChessDemoPage: React.FC = () => {
   }
 
   return (
-    <div className="chess-demo-page">
-      <div className="page-header">
-        <h2 className="page-title">♟️ 国际象棋对弈</h2>
-        <p className="page-subtitle">点击棋子选择，再点击目标位置移动</p>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-        <div style={{
-          background: '#f8f9fa',
-          padding: '20px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{
-              fontWeight: 'bold',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              background: game.turn() === 'w' ? '#fff' : '#2c3e50',
-              color: game.turn() === 'w' ? '#2c3e50' : '#fff',
-              border: `2px solid ${game.turn() === 'w' ? '#27ae60' : '#e74c3c'}`,
-              fontSize: '16px'
-            }}>
-              {game.turn() === 'w' ? '♔ 白方走棋' : aiMode ? '♚ AI 走棋中...' : '♚ 黑方走棋'}
-            </span>
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-              {hintMove && hintClickCount > 0 && (
-                <span style={{ color: '#9b59b6', fontWeight: 'bold', fontSize: '14px' }}>
-                  💡 [{hintClickCount}] 推荐: {hintMove}
-                </span>
-              )}
-              {aiThinking && (
-                <span style={{ color: '#3498db', fontSize: '14px' }}>🤔 思考中...</span>
-              )}
-              {game.isCheckmate() && (
-                <span style={{ color: '#e74c3c', fontWeight: 'bold' }}>将死！</span>
-              )}
-              {game.isCheck() && (
-                <span style={{ color: '#e67e22', fontWeight: 'bold' }}>将军！</span>
-              )}
-              <button
-                onClick={handleNewGame}
-                style={{ padding: '6px 12px', background: '#95a5a6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
-              >
-                新对局
-              </button>
-              <button
-                onClick={handleHint}
-                disabled={game.isGameOver()}
-                style={{ padding: '6px 12px', background: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: game.isGameOver() ? 'not-allowed' : 'pointer', fontSize: '12px', opacity: game.isGameOver() ? 0.5 : 1 }}
-              >
-                💡 提示
-              </button>
-            </div>
+    <div className="page-wrapper">
+      {/* 顶部导航栏 - 与首页保持一致 */}
+      <nav className="navbar">
+        <div className="nav-left">
+          <Link to="/" className="logo">
+            <span className="logo-icon">♞</span>
+            <span>Aaron Chess</span>
+          </Link>
+          <div className="nav-links">
+            <Link to="/demo" className="nav-link active">对弈</Link>
+            <Link to="/training" className="nav-link">训练</Link>
+            <Link to="/analysis" className="nav-link">分析</Link>
+            <Link to="/training-setup" className="nav-link">设置</Link>
           </div>
+        </div>
+        <div className="nav-right">
+          <button className="nav-btn nav-btn-secondary">登录</button>
+          <button className="nav-btn">注册</button>
+        </div>
+      </nav>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 50px)', gridTemplateRows: 'repeat(8, 50px)', border: '2px solid #2c3e50' }}>
+      {/* 主内容区 */}
+      <div className="main-layout">
+        <div className="chess-demo-content">
+          <div className="chess-board-container">
+            <div className="chess-turn-indicator">
+              <span className={`turn-badge ${game.turn() === 'w' ? 'white-turn' : 'black-turn'}`}>
+                {game.turn() === 'w' ? '白方走棋' : aiMode ? 'AI 思考中...' : '黑方走棋'}
+              </span>
+              <div className="chess-controls">
+                {hintMove && hintClickCount > 0 && (
+                  <span className="hint-message">
+                    推荐: {hintMove}
+                  </span>
+                )}
+                {aiThinking && (
+                  <span className="thinking-message">思考中...</span>
+                )}
+                {game.isCheckmate() && (
+                  <span className="checkmate-message">将死</span>
+                )}
+                {game.isCheck() && (
+                  <span className="check-message">将军</span>
+                )}
+                <button
+                  onClick={handleNewGame}
+                  className="chess-btn chess-btn-new"
+                >
+                  新游戏
+                </button>
+                <button
+                  onClick={handleHint}
+                  disabled={game.isGameOver()}
+                  className={`chess-btn chess-btn-hint ${game.isGameOver() ? 'disabled' : ''}`}
+                >
+                  提示
+                </button>
+              </div>
+            </div>
+
+          <div className="chess-board-grid">
             {RANKS.map((rank) =>
               FILES.map((file) => {
                 const square = `${file}${rank}` as Square
@@ -364,97 +390,38 @@ const ChessDemoPage: React.FC = () => {
                   <div
                     key={square}
                     onClick={() => handleSquareClick(square)}
-                    style={{
-                      backgroundColor: squareColor === 'light' ? '#f0d9b5' : '#b58863',
-                      border: isHintFrom ? '3px solid #9b59b6' : isHintTo ? '3px solid #9b59b6' : isSelected ? '3px solid #3498db' : isPossibleMove ? '3px solid #27ae60' : '1px solid #2c3e50',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '36px',
-                      cursor: 'pointer',
-                      userSelect: 'none',
-                      position: 'relative',
-                    }}
+                    className={`chess-square ${squareColor} ${isSelected ? 'selected' : ''} ${isPossibleMove ? 'possible-move' : ''} ${isHintFrom ? 'hint-from' : ''} ${isHintTo ? 'hint-to' : ''}`}
                   >
                     {piece && (
-                      <span style={{
-                        color: piece.color === 'w' ? '#fff' : '#000',
-                        textShadow: piece.color === 'w' ? '0 0 2px #000' : '0 0 2px #fff',
-                        fontWeight: 'bold',
-                      }}>
+                      <span className={`chess-piece ${piece.color === 'w' ? 'white-piece' : 'black-piece'}`}>
                         {PIECE_SYMBOLS[getPieceSymbol(piece)]}
                       </span>
                     )}
                     {isPossibleMove && !piece && (
-                      <div style={{
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50%',
-                        background: 'rgba(39, 174, 96, 0.6)',
-                      }} />
+                      <div className="possible-move-indicator" />
                     )}
                     {isHintTo && !piece && (
-                      <div style={{
-                        position: 'absolute',
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        background: 'rgba(155, 89, 182, 0.7)',
-                        border: '2px solid #8e44ad',
-                      }} />
+                      <div className="hint-move-indicator" />
                     )}
                   </div>
                 )
               })
             )}
           </div>
-
-          <div style={{ marginTop: '10px', fontSize: '14px', color: '#7f8c8d', textAlign: 'center' }}>
-            {game.history().map((move, i) => `${Math.floor(i / 2) + 1}. ${move}`).join('  ') || '暂无走法'}
           </div>
-        </div>
 
-        <div style={{ minWidth: '250px' }}>
-          <div style={{ background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-            <h3>游戏设置</h3>
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>游戏模式</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button
-                  onClick={() => { setAiMode(false); handleNewGame() }}
-                  style={{ flex: 1, padding: '8px', border: aiMode ? '1px solid #ddd' : '2px solid #3498db', background: aiMode ? 'white' : '#3498db', color: aiMode ? '#2c3e50' : 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '14px' }}
-                >
-                  两人
-                </button>
-                <button
-                  onClick={() => { setAiMode(true); handleNewGame() }}
-                  style={{ flex: 1, padding: '8px', border: aiMode ? '2px solid #3498db' : '1px solid #ddd', background: aiMode ? '#3498db' : 'white', color: aiMode ? 'white' : '#2c3e50', borderRadius: '4px', cursor: 'pointer', fontSize: '14px' }}
-                >
-                  vs AI
-                </button>
+          <div className="chess-settings-panel">
+            <div className="settings-card">
+              <h3>调试信息</h3>
+              <div className="settings-section">
+                <div className="debug-panel">
+                  <div><strong>FEN:</strong> {game.fen()}</div>
+                  <div><strong>历史长度:</strong> {game.history().length}</div>
+                  <div><strong>历史记录:</strong> {game.history().length > 0 ? game.history().join(', ') : '无'}</div>
+                  <div><strong>当前回合:</strong> {game.turn() === 'w' ? '白方' : '黑方'}</div>
+                </div>
               </div>
             </div>
-            <h3>游戏信息</h3>
-            <p>走法数: {game.history().length}</p>
-            <p>FEN: {game.fen()}</p>
-            <p>状态: {game.isCheckmate() ? '将死' : game.isDraw() ? '和棋' : '进行中'}</p>
-
-            {/* 后端连接状态 */}
-            <div style={{ marginTop: '15px', padding: '10px', borderRadius: '6px', background: backendConnected ? '#d4edda' : '#f8d7da' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-                <span style={{ fontSize: '16px' }}>{backendConnected ? '🟢' : '🔴'}</span>
-                <span>{backendConnected ? '后端已连接' : '后端未连接'}</span>
-              </div>
-            </div>
-
-            {/* 保存状态 */}
-            {saveStatus !== 'idle' && (
-              <div style={{ marginTop: '10px', fontSize: '13px' }}>
-                {saveStatus === 'saving' && <span style={{ color: '#3498db' }}>💾 保存中...</span>}
-                {saveStatus === 'saved' && <span style={{ color: '#27ae60' }}>✅ 已保存到云端</span>}
-                {saveStatus === 'error' && <span style={{ color: '#e74c3c' }}>❌ 保存失败</span>}
-              </div>
-            )}
           </div>
         </div>
       </div>
