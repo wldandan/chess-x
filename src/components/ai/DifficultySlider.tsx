@@ -4,6 +4,7 @@ interface DifficultySliderProps {
 }
 
 const ELO_RANGE = { min: 800, max: 2800 };
+const DEFAULT_ELO = 1500;
 const DIFFICULTY_LABELS = {
   beginner: '初学者 (800-1200)',
   intermediate: '中级 (1200-1800)',
@@ -24,13 +25,15 @@ export function DifficultySlider({ value, onChange }: DifficultySliderProps) {
   const isAdaptive = value === 'adaptive';
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value);
-    onChange(newValue);
+    const newValue = parseInt(e.target.value, 10);
+    if (!isNaN(newValue) && newValue >= ELO_RANGE.min && newValue <= ELO_RANGE.max) {
+      onChange(newValue);
+    }
   };
 
   const toggleAdaptive = () => {
     if (isAdaptive) {
-      onChange(1500); // Default to intermediate
+      onChange(DEFAULT_ELO);
     } else {
       onChange('adaptive');
     }
@@ -59,9 +62,13 @@ export function DifficultySlider({ value, onChange }: DifficultySliderProps) {
           <input
             type="range"
             role="slider"
+            aria-label="ELO等级分选择"
+            aria-valuemin={ELO_RANGE.min}
+            aria-valuemax={ELO_RANGE.max}
+            aria-valuenow={typeof value === 'number' ? value : undefined}
             min={ELO_RANGE.min}
             max={ELO_RANGE.max}
-            value={value}
+            value={value as number}
             onChange={handleSliderChange}
             className="elo-slider"
           />
