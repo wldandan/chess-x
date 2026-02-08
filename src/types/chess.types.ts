@@ -153,3 +153,132 @@ export type Notation = 'san' | 'lan' | 'uci';
 
 // AI 难度级别
 export type DifficultyLevel = 'beginner' | 'easy' | 'medium' | 'hard' | 'expert' | 'master';
+
+// ======================
+// AI风格训练相关类型定义
+// ======================
+
+// 棋手完整配置
+export interface AIPlayerProfile {
+  id: string;
+  name: string;
+  displayName: string;
+  description: string;
+  elo: number;
+  style: PlayerStyle;
+  styleParams: StyleParameters;
+  icon?: string; // 棋手头像或图标
+  difficultyRange: [number, number]; // ELO范围 [min, max]
+  characteristics: string[]; // 风格特点描述
+}
+
+// 训练会话配置
+export interface TrainingSessionConfig {
+  playerProfileId: string;
+  targetElo: number;
+  adaptiveMode: boolean;
+  sessionLength: number; // 对局数
+  focusAreas: string[]; // 重点训练领域
+  startedAt?: Date;
+  completedAt?: Date;
+}
+
+// 弱点分析
+export interface WeaknessAnalysis {
+  id: string;
+  area: string; // 弱点领域
+  severity: number; // 严重程度 (0-1)
+  impact: number; // 对棋力影响 (0-1)
+  frequency: number; // 出现频率 (0-1)
+  examples: string[]; // 具体例子
+  improvementPriority: 'low' | 'medium' | 'high';
+  trend: 'improving' | 'stable' | 'worsening';
+}
+
+// 强项分析
+export interface StrengthAnalysis {
+  id: string;
+  area: string; // 强项领域
+  level: number; // 水平 (0-100)
+  consistency: number; // 稳定性 (0-1)
+  evidence: string[]; // 证据描述
+  trend: 'improving' | 'stable' | 'declining';
+}
+
+// 训练进度追踪
+export interface TrainingProgress {
+  sessionId: string;
+  playerProfileId: string;
+  gamesPlayed: number;
+  gamesWon: number;
+  gamesDrawn: number;
+  gamesLost: number;
+  averageMoves: number;
+  averageTime: number; // 平均对局时间(秒)
+  styleAdaptationScore: number; // 0-100
+  eloChange: number;
+  weaknesses: WeaknessAnalysis[];
+  strengths: StrengthAnalysis[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// 自适应难度配置
+export interface AdaptiveDifficultyConfig {
+  baseElo: number;
+  adjustmentRate: number; // 0-1，调整速度
+  minElo: number;
+  maxElo: number;
+  performanceThresholds: {
+    win: number; // 胜率阈值
+    draw: number; // 和棋率阈值
+    loss: number; // 负率阈值
+  };
+  consistencyThreshold: number; // 表现一致性阈值
+}
+
+// 训练结果
+export interface TrainingResult {
+  sessionId: string;
+  gameId: string;
+  result: GameResult;
+  moves: number;
+  timeUsed: number; // 用时(秒)
+  qualityScore: number; // 对局质量评分 (0-100)
+  criticalMistakes: number;
+  tacticalOpportunities: number;
+  styleMatchScore: number; // 风格匹配度 (0-100)
+  createdAt: Date;
+}
+
+// 训练模式
+export type TrainingMode =
+  | 'style-focused'      // 风格专项训练
+  | 'mixed-challenge'    // 混合风格挑战
+  | 'weakness-targeted'; // 弱点针对性训练
+
+// 训练报告
+export interface TrainingReport {
+  sessionId: string;
+  playerProfileId: string;
+  startDate: Date;
+  endDate: Date;
+  overallProgress: number; // 整体进度 (0-100)
+  skillImprovements: Array<{
+    skill: string;
+    improvement: number;
+    evidence: string[];
+  }>;
+  weaknessReductions: Array<{
+    weakness: string;
+    reduction: number;
+    evidence: string[];
+  }>;
+  recommendations: Array<{
+    action: string;
+    priority: 'low' | 'medium' | 'high';
+    rationale: string;
+  }>;
+  predictedEloGain: number;
+  confidence: number; // 报告置信度 (0-1)
+}
