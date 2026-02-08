@@ -7,6 +7,14 @@ interface PlayerProfileSelectorProps {
 }
 
 export function PlayerProfileSelector({ onSelect, selectedId }: PlayerProfileSelectorProps) {
+  if (playerProfiles.length === 0) {
+    return (
+      <div className="player-profile-selector empty">
+        <p>No AI player profiles available</p>
+      </div>
+    );
+  }
+
   return (
     <div className="player-profile-selector">
       <h2>选择AI对手风格</h2>

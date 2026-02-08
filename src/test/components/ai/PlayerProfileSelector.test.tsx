@@ -28,4 +28,14 @@ describe('PlayerProfileSelector', () => {
     const carlsenCard = screen.getByTestId('profile-magnus_carlsen');
     expect(carlsenCard).toHaveClass('selected');
   });
+
+  it('should support keyboard navigation', () => {
+    const onSelect = vi.fn();
+    render(<PlayerProfileSelector onSelect={onSelect} />);
+
+    const carlsenCard = screen.getByTestId('profile-magnus_carlsen');
+    fireEvent.keyDown(carlsenCard, { key: 'Enter' });
+
+    expect(onSelect).toHaveBeenCalledWith('magnus_carlsen');
+  });
 });
