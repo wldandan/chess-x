@@ -5,6 +5,8 @@ import ChessDemoPage from './pages/ChessDemoPage'
 import AnalysisPage from './pages/AnalysisPage'
 import TrainingPage from './pages/TrainingPage'
 import { TrainingSetupPage } from './pages/TrainingSetupPage'
+import AITrainingPage from './pages/AITrainingPage'
+import TrainingReportPage from './pages/TrainingReportPage'
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
           <Route path="/analysis" element={<AnalysisPage />} />
           <Route path="/training" element={<TrainingPage />} />
           <Route path="/training-setup" element={<TrainingSetupPage />} />
+          <Route path="/ai-training" element={<AITrainingPage />} />
+          <Route path="/ai-training/report" element={<TrainingReportPage trainingProgress={null} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>

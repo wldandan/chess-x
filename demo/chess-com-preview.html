@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aaron Chess - chess.com 风格预览（未登录版）</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* chess.com 官方配色 */
+      --bg-primary: #302e2b;
+      --bg-secondary: #262421;
+      --bg-tertiary: #464542;
+      --bg-card: #403e3b;
+      --chess-green: #81b64c;
+      --chess-green-dark: #6a9a3a;
+      --chess-green-light: #9bd668;
+      --text-primary: #ffffff;
+      --text-secondary: #bababa;
+      --text-muted: #7d7d7d;
+      --border-color: #464542;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========== 顶部导航栏 ========== */
+    .navbar {
+      background: var(--bg-secondary);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      font-size: 32px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 5px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.15s;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .nav-btn {
+      background: var(--chess-green);
+      color: var(--text-primary);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-btn:hover {
+      background: var(--chess-green-dark);
+    }
+
+    .nav-btn-secondary {
+      background: transparent;
+      border: 2px solid var(--chess-green);
+    }
+
+    .nav-btn-secondary:hover {
+      background: var(--chess-green);
+    }
+
+    /* ========== 主布局 ========== */
+    .main-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 20px;
+    }
+
+    /* ========== Hero 区域 ========== */
+    .hero-section {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a1a1a 100%);
+      border-radius: 16px;
+      padding: 60px 40px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(129, 182, 76, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+    }
+
+    .hero-content {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(129, 182, 76, 0.15);
+      color: var(--chess-green-light);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .hero-title .highlight {
+      color: var(--chess-green);
+    }
+
+    .hero-subtitle {
+      color: var(--text-secondary);
+      font-size: 18px;
+      margin-bottom: 30px;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 14px;
+    }
+
+    .btn-hero {
+      background: var(--chess-green);
+      color: var(--text-primary);
+      border: none;
+      padding: 16px 32px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-hero:hover {
+      background: var(--chess-green-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(129, 182, 76, 0.4);
+    }
+
+    .btn-hero-secondary {
+      background: transparent;
+      border: 2px solid var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .btn-hero-secondary:hover {
+      border-color: var(--chess-green);
+      background: rgba(129, 182, 76, 0.1);
+    }
+
+    .hero-board {
+      width: 400px;
+      height: 400px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 1;
+    }
+
+
+    /* ========== 共享样式 ========== */
+    .section-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .section-subtitle {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    /* ========== 快速开始卡片 ========== */
+    .quick-start-section {
+      margin-bottom: 30px;
+    }
+
+    .quick-start-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .quick-start-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .quick-start-card:hover {
+      border-color: var(--chess-green);
+      background: var(--bg-card);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .quick-start-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+    }
+
+    .quick-start-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .quick-start-card p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* ========== 数据展示 ========== */
+    .stats-section {
+      background: linear-gradient(135deg, var(--bg-secondary), #1a1a1a);
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+    }
+
+    .stat-item {
+      padding: 20px;
+    }
+
+    .stat-value {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--chess-green);
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== 用户评价 ========== */
+    .testimonials-section {
+      margin-bottom: 30px;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .testimonial-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .testimonial-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .testimonial-name {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .testimonial-title {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .testimonial-text {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    .testimonial-rating {
+      color: var(--chess-green);
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    /* ========== CTA 区域 ========== */
+    .cta-section {
+      background: linear-gradient(135deg, var(--chess-green), var(--chess-green-dark));
+      border-radius: 16px;
+      padding: 50px;
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-title {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: white;
+    }
+
+    .cta-text {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+    }
+
+    .btn-cta {
+      background: white;
+      color: var(--chess-green);
+      border: none;
+      padding: 16px 36px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-cta-secondary {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+    }
+
+    /* ========== 底部 ========== */
+    .footer {
+      background: var(--bg-secondary);
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover {
+      color: var(--chess-green);
+    }
+
+    .footer-copyright {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .quick-start-grid,
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 30px;
+      }
+
+      .hero-board {
+        width: 320px;
+        height: 320px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .quick-start-grid,
+      .testimonials-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        font-size: 32px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <a href="#" class="logo">
+          <span class="logo-icon">♞</span>
+          <span>Aaron Chess</span>
+        </a>
+        <div class="nav-links">
+          <a href="#" class="nav-link active">首页</a>
+          <a href="#" class="nav-link">功能介绍</a>
+          <a href="#" class="nav-link">课程</a>
+          <a href="#" class="nav-link">价格</a>
+          <a href="#" class="nav-link">关于我们</a>
+        </div>
+      </div>
+      <div class="nav-right">
+        <button class="nav-btn nav-btn-secondary">登录</button>
+        <button class="nav-btn">免费注册</button>
+      </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-layout">
+      <!-- Hero 区域 -->
+      <section class="hero-section">
+        <div class="hero-content">
+          <span class="hero-badge">🎯 专为13-16岁青少年设计</span>
+          <h1 class="hero-title">
+            像大师一样<br>
+            <span class="highlight">思考每一步棋</span>
+          </h1>
+          <p class="hero-subtitle">
+            结合AI智能分析和游戏化学习，让你的国际象棋水平快速提升。已经有超过10,000名青少年棋手在这里开始他们的象棋之旅。
+          </p>
+          <div class="hero-buttons">
+            <a href="#" class="btn-hero">免费开始学习</a>
+            <a href="#" class="btn-hero btn-hero-secondary">了解更多</a>
+          </div>
+        </div>
+        <div class="hero-board">
+          <!-- Chess.com 官方动图 -->
+          <img src="https://assets-configurator.chess.com/image/configurator/chessboard_1768166350728.gif"
+               alt="Chess.com Animated Board"
+               style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        </div>
+      </section>
+
+      <!-- 快速开始 -->
+      <section class="quick-start-section">
+        <div class="section-header">
+          <h2 class="section-title">立即开始</h2>
+          <p class="section-subtitle">选择你想要的学习方式，马上开始提升棋艺</p>
+        </div>
+        <div class="quick-start-grid">
+          <a href="/demo" class="quick-start-card">
+            <div class="quick-start-icon">🤖</div>
+            <h3>对战 AI</h3>
+            <p>不同难度级别的AI对手，随时对局练习</p>
+          </a>
+          <a href="/training" class="quick-start-card">
+            <div class="quick-start-icon">🎯</div>
+            <h3>战术训练</h3>
+            <p>每日战术挑战，提升计算和识别能力</p>
+          </a>
+          <a href="/analysis" class="quick-start-card">
+            <div class="quick-start-icon">📖</div>
+            <h3>棋局分析</h3>
+            <p>深度分析对局，发现改进空间</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- 数据统计 -->
+      <section class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value">10K+</div>
+            <div class="stat-label">注册学习者</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">50K+</div>
+            <div class="stat-label">完成训练</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">98%</div>
+            <div class="stat-label">满意率</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">4.8★</div>
+            <div class="stat-label">用户评分</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 用户评价 -->
+      <section class="testimonials-section">
+        <div class="section-header">
+          <h2 class="section-title">学员评价</h2>
+          <p class="section-subtitle">看看其他学员怎么说</p>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="testimonial-avatar">👦</div>
+              <div>
+                <div class="testimonial-name">小明</div>
+                <div class="testimonial-title">14岁，学习3个月</div>
+              </div>
+            </div>
+            <p class="testimonial-text">"这个平台真的很有趣！AI分析帮我发现了很多自己没注意到的错误，战术训练让我的计算能力提升了很多。"</p>
+            <div class="testimonial-rating">★★★★★</div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="testimonial-avatar">👧</div>
+              <div>
+                <div class="testimonial-name">小红</div>
+                <div class="testimonial-title">15岁，学习6个月</div>
+              </div>
+            </div>
+            <p class="testimonial-text">"游戏化的学习方式让学棋变得不再枯燥。徽章和成就系统很有激励性，让我每天都想继续学习！"</p>
+            <div class="testimonial-rating">★★★★★</div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="testimonial-avatar">👦</div>
+              <div>
+                <div class="testimonial-name">小刚</div>
+                <div class="testimonial-title">16岁，学习1年</div>
+              </div>
+            </div>
+            <p class="testimonial-text">"从完全不会到能和同学对弈，Aaron Chess的循序渐进式教学非常适合初学者。推荐给所有想学国际象棋的朋友！"</p>
+            <div class="testimonial-rating">★★★★★</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA 区域 -->
+      <section class="cta-section">
+        <div class="cta-content">
+          <h2 class="cta-title">准备好开始你的象棋之旅了吗？</h2>
+          <p class="cta-text">加入超过10,000名青少年棋手，一起在Aaron Chess提升棋艺，享受国际象棋的乐趣</p>
+          <div class="cta-buttons">
+            <button class="btn-cta">免费注册</button>
+            <button class="btn-cta btn-cta-secondary">了解更多</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 底部 -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="#">关于我们</a>
+        <a href="#">功能介绍</a>
+        <a href="#">价格方案</a>
+        <a href="#">帮助中心</a>
+        <a href="#">隐私政策</a>
+        <a href="#">使用条款</a>
+      </div>
+      <p class="footer-copyright">© 2025 Aaron Chess - 专为13-16岁青少年设计</p>
+    </footer>
+  </div>
+</body>
+</html>

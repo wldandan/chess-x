@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aaron Chess - 游戏化焦点版</title>
+    <link rel="stylesheet" href="../src/styles/theme.css">
+    <link rel="stylesheet" href="../src/styles/pages.css">
+    <style>
+        /* 徽章成就墙自定义样式 */
+        :root {
+            --badge-gold: #fbbf24;
+            --badge-silver: #cbd5e1;
+            --badge-bronze: #d97706;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        /* 英雄区域 */
+        .hero-section {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #5a7a42 100%);
+            color: white;
+            padding: var(--space-12) var(--space-6);
+            border-radius: var(--radius-xl);
+            margin: var(--space-8) 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm0 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm11-9c0-3.866-3.134-7-7-7s-7 3.134-7 7 3.134 7 7 7 7-3.134 7-7-3.134-7-7-7 7 3.134 7 7z' fill='%23ffffff' fill-opacity='0.05'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: var(--space-4);
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-6);
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-8);
+            margin-top: var(--space-8);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            min-width: 150px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--badge-gold);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        /* 徽章成就墙区域 */
+        .badges-section {
+            margin: var(--space-12) 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .view-all {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .badges-scroll-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badges-scroll {
+            display: flex;
+            gap: var(--space-6);
+            padding: var(--space-4) 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .badges-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .badge-series-card {
+            flex: 0 0 300px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all var(--transition-base);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge-series-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--secondary-color);
+        }
+
+        .series-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .series-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-hover));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .series-info h3 {
+            margin: 0 0 var(--space-1) 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .series-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .progress-container {
+            margin: var(--space-4) 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-2);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--secondary-hover));
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        .badges-preview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+
+        .badge-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .badge-preview.unlocked {
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-hover));
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .badge-preview.locked {
+            background: var(--bg-tertiary);
+            color: var(--text-tertiary);
+            filter: grayscale(0.7);
+        }
+
+        /* 快速行动区域 */
+        .quick-actions {
+            margin: var(--space-12) 0;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .action-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-base);
+            display: block;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--secondary-color);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: var(--space-4);
+            color: white;
+        }
+
+        .action-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+
+        .action-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+            font-size: 0.9375rem;
+        }
+
+        /* 平台数据区域 */
+        .platform-stats {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: var(--space-10) var(--space-6);
+            border-radius: var(--radius-xl);
+            margin: var(--space-12) 0;
+        }
+
+        .stats-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: var(--space-6);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-6);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: var(--space-4);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: var(--space-2);
+        }
+
+        .stat-text {
+            font-size: 0.9375rem;
+            opacity: 0.9;
+        }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shine {
+            0% { background-position: -100px; }
+            100% { background-position: 200px; }
+        }
+
+        .animate-fadein {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .shine-effect {
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            background-size: 200px 100%;
+            animation: shine 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 英雄区域 -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">🏆 你的国际象棋冒险之旅</h1>
+                <p class="hero-subtitle">通过游戏化挑战提升棋力，收集徽章成就</p>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">已收集徽章</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">中级</div>
+                        <div class="stat-label">当前等级</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">3/5</div>
+                        <div class="stat-label">今日挑战</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">#78</div>
+                        <div class="stat-label">全球排名</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 徽章成就墙 -->
+        <section class="badges-section">
+            <div class="section-header">
+                <h2 class="section-title">🎯 徽章成就墙</h2>
+                <a href="#" class="view-all">查看全部成就 →</a>
+            </div>
+
+            <div class="badges-scroll-container">
+                <div class="badges-scroll">
+                    <!-- 战术大师系列 -->
+                    <div class="badge-series-card animate-fadein" style="animation-delay: 0.1s">
+                        <div class="series-header">
+                            <div class="series-icon">⚔️</div>
+                            <div class="series-info">
+                                <h3>战术大师</h3>
+                                <p>掌握16种战术技巧</p>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>收集进度</span>
+                                <span>3/5</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div class="badges-preview">
+                            <div class="badge-preview unlocked">♞</div>
+                            <div class="badge-preview unlocked">♜</div>
+                            <div class="badge-preview unlocked">♝</div>
+                            <div class="badge-preview locked">♛</div>
+                            <div class="badge-preview locked">♚</div>
+                            <div class="badge-preview shine-effect">🏆</div>
+                        </div>
+                    </div>
+
+                    <!-- 开局专家系列 -->
+                    <div class="badge-series-card animate-fadein" style="animation-delay: 0.2s">
+                        <div class="series-header">
+                            <div class="series-icon">📚</div>
+                            <div class="series-info">
+                                <h3>开局专家</h3>
+                                <p>精通经典开局</p>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>收集进度</span>
+                                <span>2/4</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <div class="badges-preview">
+                            <div class="badge-preview unlocked">🇮🇹</div>
+                            <div class="badge-preview unlocked">🇪🇸</div>
+                            <div class="badge-preview locked">🇫🇷</div>
+                            <div class="badge-preview locked">🏴‍☠️</div>
+                            <div class="badge-preview">📖</div>
+                            <div class="badge-preview">🎓</div>
+                        </div>
+                    </div>
+
+                    <!-- 比赛王者系列 -->
+                    <div class="badge-series-card animate-fadein" style="animation-delay: 0.3s">
+                        <div class="series-header">
+                            <div class="series-icon">🏆</div>
+                            <div class="series-info">
+                                <h3>比赛王者</h3>
+                                <p>赢得对局胜利</p>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>收集进度</span>
+                                <span>1/3</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 33%"></div>
+                            </div>
+                        </div>
+                        <div class="badges-preview">
+                            <div class="badge-preview unlocked">🥇</div>
+                            <div class="badge-preview locked">📈</div>
+                            <div class="badge-preview locked">👑</div>
+                            <div class="badge-preview">💪</div>
+                            <div class="badge-preview">🔥</div>
+                            <div class="badge-preview">🌟</div>
+                        </div>
+                    </div>
+
+                    <!-- 学习先锋系列 -->
+                    <div class="badge-series-card animate-fadein" style="animation-delay: 0.4s">
+                        <div class="series-header">
+                            <div class="series-icon">📈</div>
+                            <div class="series-info">
+                                <h3>学习先锋</h3>
+                                <p>坚持学习进步</p>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span>收集进度</span>
+                                <span>4/6</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 67%"></div>
+                            </div>
+                        </div>
+                        <div class="badges-preview">
+                            <div class="badge-preview unlocked">📅</div>
+                            <div class="badge-preview unlocked">⏰</div>
+                            <div class="badge-preview unlocked">📚</div>
+                            <div class="badge-preview unlocked">💡</div>
+                            <div class="badge-preview locked">🎯</div>
+                            <div class="badge-preview locked">🚀</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 快速行动区域 -->
+        <section class="quick-actions">
+            <div class="section-header">
+                <h2 class="section-title">⚡ 快速开始</h2>
+            </div>
+            <div class="actions-grid">
+                <a href="#" class="action-card animate-fadein" style="animation-delay: 0.1s">
+                    <div class="action-icon">♟️</div>
+                    <h3 class="action-title">开始对弈</h3>
+                    <p class="action-description">与AI进行精彩对局，提升实战能力</p>
+                    <div class="action-arrow">→</div>
+                </a>
+                <a href="#" class="action-card animate-fadein" style="animation-delay: 0.2s">
+                    <div class="action-icon">🎯</div>
+                    <h3 class="action-title">战术训练</h3>
+                    <p class="action-description">16种战术类型，自适应难度训练</p>
+                    <div class="action-arrow">→</div>
+                </a>
+                <a href="#" class="action-card animate-fadein" style="animation-delay: 0.3s">
+                    <div class="action-icon">📊</div>
+                    <h3 class="action-title">棋局分析</h3>
+                    <p class="action-description">AI深度分析你的每一步棋</p>
+                    <div class="action-arrow">→</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 平台数据区域 -->
+        <section class="platform-stats">
+            <h2 class="stats-title">✨ 平台成就</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-text">注册用户</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-text">完成训练</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100K+</div>
+                    <div class="stat-text">对局分析</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4.8★</div>
+                    <div class="stat-text">用户评分</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 简单的交互效果
+        document.querySelectorAll('.badge-series-card').forEach(card => {
+            card.addEventListener('click', function() {
+                alert('查看系列详情：' + this.querySelector('h3').textContent);
+            });
+        });
+
+        // 徽章悬停效果
+        document.querySelectorAll('.badge-preview').forEach(badge => {
+            badge.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('locked')) {
+                    this.style.transform = 'scale(1.2)';
+                }
+            });
+
+            badge.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-fadein').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

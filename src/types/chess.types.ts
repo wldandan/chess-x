@@ -154,6 +154,9 @@ export type Notation = 'san' | 'lan' | 'uci';
 // AI 难度级别
 export type DifficultyLevel = 'beginner' | 'easy' | 'medium' | 'hard' | 'expert' | 'master';
 
+// 游戏阶段
+export type GamePhase = 'opening' | 'middlegame' | 'endgame';
+
 // ======================
 // AI风格训练相关类型定义
 // ======================

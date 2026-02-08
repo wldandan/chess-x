@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aaron Chess - 互动体验版</title>
+    <link rel="stylesheet" href="../src/styles/theme.css">
+    <link rel="stylesheet" href="../src/styles/pages.css">
+    <style>
+        /* 互动体验版自定义样式 */
+        :root {
+            --interactive-pink: #ec4899;
+            --interactive-cyan: #06b6d4;
+            --interactive-orange: #f97316;
+            --particle-color: rgba(52, 211, 153, 0.6);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 动态背景元素 */
+        .background-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--particle-color), transparent);
+            opacity: 0.3;
+            filter: blur(20px);
+        }
+
+        /* 英雄区域 - 高度互动 */
+        .hero-section {
+            padding: var(--space-16) var(--space-6);
+            text-align: center;
+            position: relative;
+            margin-bottom: var(--space-12);
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--interactive-pink), var(--interactive-cyan));
+            color: white;
+            padding: var(--space-3) var(--space-5);
+            border-radius: var(--radius-full);
+            font-size: 0.9375rem;
+            font-weight: 600;
+            margin-bottom: var(--space-6);
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: var(--space-6);
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 30px rgba(52, 211, 153, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-8);
+            opacity: 0.9;
+            font-weight: 400;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .interactive-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-10);
+            margin-top: var(--space-10);
+            flex-wrap: wrap;
+        }
+
+        .stat-counter {
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            position: relative;
+            padding: var(--space-4);
+        }
+
+        .stat-counter:hover {
+            transform: scale(1.1);
+        }
+
+        .stat-counter:hover .counter-value {
+            color: var(--interactive-cyan);
+        }
+
+        .counter-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+            margin-bottom: var(--space-2);
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .counter-value::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--interactive-pink), var(--interactive-cyan));
+            transition: width 0.3s ease;
+        }
+
+        .stat-counter:hover .counter-value::after {
+            width: 100%;
+        }
+
+        .counter-label {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        /* 互动徽章墙 */
+        .interactive-badges {
+            margin: var(--space-16) 0;
+            position: relative;
+        }
+
+        .badges-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+            padding-bottom: var(--space-6);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .header-title::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--interactive-pink), var(--interactive-cyan));
+            border-radius: 2px;
+        }
+
+        .badges-carousel {
+            position: relative;
+            overflow: hidden;
+            padding: var(--space-6) 0;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: var(--space-8);
+            transition: transform 0.5s ease;
+            padding: var(--space-4);
+        }
+
+        .badge-3d-card {
+            flex: 0 0 350px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge-3d-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(52, 211, 153, 0.2);
+            border-color: var(--secondary-color);
+        }
+
+        .badge-3d-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transition: left 0.6s ease;
+        }
+
+        .badge-3d-card:hover::before {
+            left: 100%;
+        }
+
+        .badge-3d-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge-3d-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+
+        .badge-3d-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--interactive-pink), var(--interactive-cyan));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.3);
+            animation: rotate 20s linear infinite;
+            animation-play-state: paused;
+        }
+
+        .badge-3d-card:hover .badge-3d-icon {
+            animation-play-state: running;
+        }
+
+        .badge-3d-info h3 {
+            margin: 0 0 var(--space-2) 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .badge-3d-info p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9375rem;
+        }
+
+        .badge-3d-stats {
+            margin: var(--space-6) 0;
+        }
+
+        .stats-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stats-fill {
+            height: 100%;
+            background: linear-gradient(90deg,
+                var(--interactive-pink),
+                var(--interactive-cyan),
+                var(--interactive-orange)
+            );
+            border-radius: 5px;
+            width: 0;
+            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: shine 2s infinite;
+        }
+
+        .badge-3d-particles {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-3);
+            margin-top: var(--space-6);
+            flex-wrap: wrap;
+        }
+
+        .particle {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-hover));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .particle:hover {
+            transform: scale(1.3) rotate(15deg);
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .particle.unlocked {
+            background: linear-gradient(135deg, var(--interactive-cyan), var(--interactive-pink));
+        }
+
+        .particle.locked {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .particle::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .particle:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 游戏化行动区域 */
+        .gamified-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-8);
+            margin: var(--space-16) 0;
+        }
+
+        .action-3d-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+            backdrop-filter: blur(15px);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-3d-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(52, 211, 153, 0.3);
+            border-color: var(--secondary-color);
+        }
+
+        .action-3d-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .action-3d-card:hover::before {
+            opacity: 1;
+        }
+
+        .action-3d-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--interactive-orange), var(--interactive-pink));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: var(--space-6);
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .action-3d-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .action-3d-description {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: var(--space-6);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .action-3d-progress {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .action-3d-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--interactive-cyan), var(--secondary-color));
+            border-radius: 3px;
+            width: 0;
+            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* 动画定义 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .animate-slidein {
+            animation: slideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态背景元素 -->
+    <div class="background-elements" id="backgroundElements"></div>
+
+    <div class="container">
+        <!-- 英雄区域 -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge animate-pulse">✨ 沉浸式国际象棋体验</div>
+                <h1 class="hero-title">让每一步棋都<br><span style="color: var(--interactive-cyan)">充满惊喜</span></h1>
+                <p class="hero-subtitle">
+                    通过酷炫的互动效果和游戏化挑战，让国际象棋学习变得前所未有的有趣
+                </p>
+
+                <div class="interactive-stats">
+                    <div class="stat-counter" onclick="animateCounter(this)">
+                        <div class="counter-value" data-target="15">0</div>
+                        <div class="counter-label">互动徽章</div>
+                    </div>
+                    <div class="stat-counter" onclick="animateCounter(this)">
+                        <div class="counter-value" data-target="28">0</div>
+                        <div class="counter-label">完成挑战</div>
+                    </div>
+                    <div class="stat-counter" onclick="animateCounter(this)">
+                        <div class="counter-value" data-target="1560">0</div>
+                        <div class="counter-label">对局评分</div>
+                    </div>
+                    <div class="stat-counter" onclick="animateCounter(this)">
+                        <div class="counter-value" data-target="99">0</div>
+                        <div class="counter-label">技能掌握%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 互动徽章墙 -->
+        <section class="interactive-badges">
+            <div class="badges-header">
+                <div class="header-title">🎮 互动成就系统</div>
+                <button class="btn btn-primary" onclick="carouselNext()">
+                    探索更多 →
+                </button>
+            </div>
+
+            <div class="badges-carousel">
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- 战术大师卡片 -->
+                    <div class="badge-3d-card animate-slidein" style="animation-delay: 0.1s">
+                        <div class="badge-3d-content">
+                            <div class="badge-3d-header">
+                                <div class="badge-3d-icon">⚔️</div>
+                                <div class="badge-3d-info">
+                                    <h3>战术大师</h3>
+                                    <p>掌握炫酷的战术组合</p>
+                                </div>
+                            </div>
+                            <div class="badge-3d-stats">
+                                <div class="stats-bar">
+                                    <div class="stats-fill" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            <div class="badge-3d-particles">
+                                <div class="particle unlocked" data-tooltip="双车杀王">♞</div>
+                                <div class="particle unlocked" data-tooltip="闪击战术">⚡</div>
+                                <div class="particle unlocked" data-tooltip="牵制技巧">🎯</div>
+                                <div class="particle locked" data-tooltip="消除防御">🛡️</div>
+                                <div class="particle locked" data-tooltip="战术组合">🌀</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 开局专家卡片 -->
+                    <div class="badge-3d-card animate-slidein" style="animation-delay: 0.2s">
+                        <div class="badge-3d-content">
+                            <div class="badge-3d-header">
+                                <div class="badge-3d-icon">📚</div>
+                                <div class="badge-3d-info">
+                                    <h3>开局专家</h3>
+                                    <p>精通经典开局秘籍</p>
+                                </div>
+                            </div>
+                            <div class="badge-3d-stats">
+                                <div class="stats-bar">
+                                    <div class="stats-fill" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <div class="badge-3d-particles">
+                                <div class="particle unlocked" data-tooltip="意大利开局">🇮🇹</div>
+                                <div class="particle unlocked" data-tooltip="西班牙开局">🇪🇸</div>
+                                <div class="particle locked" data-tooltip="法兰西防御">🇫🇷</div>
+                                <div class="particle locked" data-tooltip="西西里防御">🏴‍☠️</div>
+                                <div class="particle" data-tooltip="更多开局">📖</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 比赛王者卡片 -->
+                    <div class="badge-3d-card animate-slidein" style="animation-delay: 0.3s">
+                        <div class="badge-3d-content">
+                            <div class="badge-3d-header">
+                                <div class="badge-3d-icon">🏆</div>
+                                <div class="badge-3d-info">
+                                    <h3>比赛王者</h3>
+                                    <p>赢得荣耀胜利</p>
+                                </div>
+                            </div>
+                            <div class="badge-3d-stats">
+                                <div class="stats-bar">
+                                    <div class="stats-fill" style="width: 33%"></div>
+                                </div>
+                            </div>
+                            <div class="badge-3d-particles">
+                                <div class="particle unlocked" data-tooltip="连胜3局">🥇</div>
+                                <div class="particle locked" data-tooltip="击败大师">👑</div>
+                                <div class="particle locked" data-tooltip="完美对局">⭐</div>
+                                <div class="particle" data-tooltip="比赛成就">🔥</div>
+                                <div class="particle" data-tooltip="更多挑战">💪</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 游戏化行动区域 -->
+        <section class="gamified-actions">
+            <!-- 对弈挑战 -->
+            <div class="action-3d-card animate-slidein" style="animation-delay: 0.1s">
+                <div class="action-3d-icon">♟️</div>
+                <h3 class="action-3d-title">动态对弈挑战</h3>
+                <p class="action-3d-description">
+                    与自适应AI进行实时对局，每一步都有视觉反馈和评分，挑战你的极限
+                </p>
+                <div class="action-3d-progress">
+                    <div class="action-3d-fill" style="width: 75%"></div>
+                </div>
+                <div style="margin-top: var(--space-4); font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">
+                    今日进度: 75% • 奖励: 50 XP
+                </div>
+            </div>
+
+            <!-- 战术训练 -->
+            <div class="action-3d-card animate-slidein" style="animation-delay: 0.2s">
+                <div class="action-3d-icon">🎯</div>
+                <h3 class="action-3d-title">互动战术训练</h3>
+                <p class="action-3d-description">
+                    16种战术类型，带有粒子效果和音效反馈，让训练像玩游戏一样上瘾
+                </p>
+                <div class="action-3d-progress">
+                    <div class="action-3d-fill" style="width: 45%"></div>
+                </div>
+                <div style="margin-top: var(--space-4); font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">
+                    今日进度: 45% • 奖励: 战术徽章
+                </div>
+            </div>
+
+            <!-- 分析复盘 -->
+            <div class="action-3d-card animate-slidein" style="animation-delay: 0.3s">
+                <div class="action-3d-icon">📊</div>
+                <h3 class="action-3d-title">3D分析复盘</h3>
+                <p class="action-3d-description">
+                    可视化棋局分析，3D棋盘视角，动态评分曲线，深度理解每一步棋
+                </p>
+                <div class="action-3d-progress">
+                    <div class="action-3d-fill" style="width: 90%"></div>
+                </div>
+                <div style="margin-top: var(--space-4); font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">
+                    今日进度: 90% • 奖励: 分析达人
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 创建动态背景元素
+        function createBackgroundElements() {
+            const container = document.getElementById('backgroundElements');
+            const colors = [
+                'rgba(52, 211, 153, 0.1)',
+                'rgba(236, 72, 153, 0.1)',
+                'rgba(6, 182, 212, 0.1)',
+                'rgba(249, 115, 22, 0.1)'
+            ];
+
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+
+                // 随机大小和位置
+                const size = Math.random() * 200 + 50;
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.left = `${x}%`;
+                element.style.top = `${y}%`;
+                element.style.background = color;
+                element.style.animation = `float ${Math.random() * 10 + 10}s ease-in-out infinite`;
+                element.style.animationDelay = `${Math.random() * 5}s`;
+
+                container.appendChild(element);
+            }
+        }
+
+        // 计数器动画
+        function animateCounter(element) {
+            const counter = element.querySelector('.counter-value');
+            const target = parseInt(counter.getAttribute('data-target'));
+            const duration = 1500;
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+
+            const updateCounter = () => {
+                current += increment;
+                if (current >= target) {
+                    counter.textContent = target;
+                    return;
+                }
+                counter.textContent = Math.floor(current);
+                requestAnimationFrame(updateCounter);
+            };
+
+            updateCounter();
+
+            // 添加点击效果
+            element.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                element.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // 轮播功能
+        let carouselPosition = 0;
+        const carouselTrack = document.getElementById('carouselTrack');
+
+        function carouselNext() {
+            const cardWidth = 350 + parseInt(getComputedStyle(document.documentElement)
+                .getPropertyValue('--space-8').replace('px', ''));
+
+            carouselPosition -= cardWidth;
+            if (carouselPosition < -cardWidth * 2) {
+                carouselPosition = 0;
+            }
+
+            carouselTrack.style.transform = `translateX(${carouselPosition}px)`;
+
+            // 添加过渡效果
+            carouselTrack.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        }
+
+        // 粒子交互
+        document.querySelectorAll('.particle').forEach(particle => {
+            particle.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                if (this.classList.contains('locked')) {
+                    this.style.animation = 'pulse 0.5s ease';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                } else {
+                    // 创建点击效果
+                    const ripple = document.createElement('div');
+                    ripple.style.position = 'absolute';
+                    ripple.style.width = '100%';
+                    ripple.style.height = '100%';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.background = 'radial-gradient(circle, rgba(255,255,255,0.3), transparent)';
+                    ripple.style.transform = 'scale(0)';
+                    ripple.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+
+                    this.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.style.transform = 'scale(2)';
+                        ripple.style.opacity = '0';
+                    }, 10);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                }
+            });
+        });
+
+        // 3D卡片悬停效果
+        document.querySelectorAll('.badge-3d-card').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateY = (x - centerX) / 25;
+                const rotateX = (centerY - y) / 25;
+
+                this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
+        });
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            createBackgroundElements();
+
+            // 初始化计数器
+            document.querySelectorAll('.counter-value').forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                animateCounter(counter.parentElement);
+            });
+
+            // 初始化进度条动画
+            setTimeout(() => {
+                document.querySelectorAll('.stats-fill, .action-3d-fill').forEach(fill => {
+                    const width = fill.style.width;
+                    fill.style.width = '0';
+                    setTimeout(() => {
+                        fill.style.width = width;
+                    }, 300);
+                });
+            }, 500);
+
+            // 初始化动画观察器
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0) scale(1)';
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            });
+
+            document.querySelectorAll('.animate-slidein').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px) scale(0.9)';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

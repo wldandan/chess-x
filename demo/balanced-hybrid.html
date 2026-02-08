@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aaron Chess - 平衡混合版</title>
+    <link rel="stylesheet" href="../src/styles/theme.css">
+    <link rel="stylesheet" href="../src/styles/pages.css">
+    <style>
+        /* 平衡混合版自定义样式 */
+        :root {
+            --edu-blue: #3b82f6;
+            --edu-green: #10b981;
+            --edu-purple: #8b5cf6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        /* 英雄区域 - 教育导向 */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: var(--space-10) var(--space-6);
+            border-radius: var(--radius-xl);
+            margin: var(--space-8) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--edu-blue), var(--edu-purple));
+            color: white;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: var(--space-4);
+        }
+
+        .hero-title {
+            font-size: 2.75rem;
+            font-weight: 700;
+            margin-bottom: var(--space-4);
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        .hero-title span {
+            color: var(--secondary-color);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-6);
+            opacity: 0.9;
+            font-weight: 400;
+            max-width: 600px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: var(--space-6);
+            margin-top: var(--space-8);
+            flex-wrap: wrap;
+        }
+
+        .learning-path {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .path-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-3);
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .path-progress {
+            margin: var(--space-3) 0;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--edu-green), var(--secondary-color));
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+
+        .path-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 平衡内容区域 */
+        .balanced-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-8);
+            margin: var(--space-12) 0;
+        }
+
+        @media (max-width: 768px) {
+            .balanced-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 徽章成就区域 */
+        .badges-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--space-6);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--edu-blue), var(--edu-purple));
+            border-radius: var(--radius-sm);
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+        }
+
+        .badge-category {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            transition: all var(--transition-base);
+        }
+
+        .badge-category:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: white;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--edu-green), var(--secondary-color));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .category-info h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .category-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .category-badges {
+            display: flex;
+            gap: var(--space-2);
+            margin-top: var(--space-3);
+        }
+
+        .badge-item {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .badge-item.unlocked {
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-hover));
+            color: white;
+        }
+
+        .badge-item.locked {
+            background: var(--border-color);
+            color: var(--text-tertiary);
+        }
+
+        /* 学习功能区域 */
+        .learning-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .learning-features {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+
+        .feature-item {
+            display: flex;
+            gap: var(--space-4);
+            align-items: flex-start;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--edu-blue), var(--edu-purple));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .feature-content h3 {
+            margin: 0 0 var(--space-1) 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .feature-content p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.5;
+        }
+
+        /* 行动号召区域 */
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin: var(--space-12) 0;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+            transition: all var(--transition-base);
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--edu-green), var(--secondary-color));
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--secondary-color);
+        }
+
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: var(--space-4);
+            color: white;
+        }
+
+        .action-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+
+        .action-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+            font-size: 0.9375rem;
+        }
+
+        .action-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-4);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--border-light);
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        /* 平台统计区域 */
+        .platform-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: var(--space-10) var(--space-6);
+            border-radius: var(--radius-xl);
+            margin: var(--space-12) 0;
+            text-align: center;
+        }
+
+        .platform-title {
+            font-size: 1.75rem;
+            margin-bottom: var(--space-6);
+            font-weight: 600;
+        }
+
+        .platform-description {
+            max-width: 600px;
+            margin: 0 auto var(--space-8);
+            opacity: 0.9;
+            font-size: 1.0625rem;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-6);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            padding: var(--space-4);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: var(--space-2);
+        }
+
+        .stat-label {
+            font-size: 0.9375rem;
+            opacity: 0.9;
+        }
+
+        /* 动画 */
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-left {
+            animation: slideInLeft 0.6s ease forwards;
+        }
+
+        .animate-right {
+            animation: slideInRight 0.6s ease forwards;
+        }
+
+        .animate-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 英雄区域 -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <span class="hero-badge">🎓 专为青少年学习设计</span>
+                <h1 class="hero-title">在<span>游戏化学习</span>中<br>掌握国际象棋</h1>
+                <p class="hero-subtitle">
+                    结合AI技术和教育心理学，为你提供科学的国际象棋学习路径
+                </p>
+
+                <div class="hero-stats">
+                    <div class="learning-path">
+                        <div class="path-title">
+                            <span>📊</span>
+                            <span>你的学习进度</span>
+                        </div>
+                        <div class="path-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div class="path-stats">
+                            <span>已掌握: 8/12 个技能</span>
+                            <span>65%</span>
+                        </div>
+                    </div>
+
+                    <div class="learning-path">
+                        <div class="path-title">
+                            <span>⭐</span>
+                            <span>成就水平</span>
+                        </div>
+                        <div class="path-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div class="path-stats">
+                            <span>等级: 中级棋手</span>
+                            <span>40%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 平衡内容区域 -->
+        <div class="balanced-content">
+            <!-- 左侧：徽章成就 -->
+            <section class="badges-section animate-left" style="opacity: 0">
+                <h2 class="section-title">🏅 学习成就</h2>
+
+                <div class="badges-grid">
+                    <!-- 战术技能 -->
+                    <div class="badge-category">
+                        <div class="category-header">
+                            <div class="category-icon">⚔️</div>
+                            <div class="category-info">
+                                <h3>战术技能</h3>
+                                <p>掌握16种战术</p>
+                            </div>
+                        </div>
+                        <div class="category-badges">
+                            <div class="badge-item unlocked">♞</div>
+                            <div class="badge-item unlocked">♜</div>
+                            <div class="badge-item unlocked">♝</div>
+                            <div class="badge-item locked">♛</div>
+                            <div class="badge-item locked">♚</div>
+                        </div>
+                    </div>
+
+                    <!-- 开局知识 -->
+                    <div class="badge-category">
+                        <div class="category-header">
+                            <div class="category-icon">📚</div>
+                            <div class="category-info">
+                                <h3>开局知识</h3>
+                                <p>精通经典开局</p>
+                            </div>
+                        </div>
+                        <div class="category-badges">
+                            <div class="badge-item unlocked">🇮🇹</div>
+                            <div class="badge-item unlocked">🇪🇸</div>
+                            <div class="badge-item locked">🇫🇷</div>
+                            <div class="badge-item locked">🏴‍☠️</div>
+                        </div>
+                    </div>
+
+                    <!-- 对局表现 -->
+                    <div class="badge-category">
+                        <div class="category-header">
+                            <div class="category-icon">🏆</div>
+                            <div class="category-info">
+                                <h3>对局表现</h3>
+                                <p>赢得比赛胜利</p>
+                            </div>
+                        </div>
+                        <div class="category-badges">
+                            <div class="badge-item unlocked">🥇</div>
+                            <div class="badge-item locked">📈</div>
+                            <div class="badge-item locked">👑</div>
+                        </div>
+                    </div>
+
+                    <!-- 学习习惯 -->
+                    <div class="badge-category">
+                        <div class="category-header">
+                            <div class="category-icon">📅</div>
+                            <div class="category-info">
+                                <h3>学习习惯</h3>
+                                <p>坚持每日学习</p>
+                            </div>
+                        </div>
+                        <div class="category-badges">
+                            <div class="badge-item unlocked">⏰</div>
+                            <div class="badge-item unlocked">📚</div>
+                            <div class="badge-item unlocked">💡</div>
+                            <div class="badge-item locked">🎯</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右侧：学习功能 -->
+            <section class="learning-section animate-right" style="opacity: 0">
+                <h2 class="section-title">🎯 学习工具</h2>
+
+                <div class="learning-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">🧠</div>
+                        <div class="feature-content">
+                            <h3>智能分析引擎</h3>
+                            <p>AI深度分析每一步棋，提供精确评分和替代建议，98%准确率</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">⚔️</div>
+                        <div class="feature-content">
+                            <h3>战术训练系统</h3>
+                            <p>16种战术类型，1000+题目，自适应难度，持续提升战术识别能力</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-content">
+                            <h3>进度追踪统计</h3>
+                            <p>详细的学习统计和可视化进步曲线，实时更新你的成长轨迹</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">🎓</div>
+                        <div class="feature-content">
+                            <h3>个性化学习路径</h3>
+                            <p>根据你的水平和学习习惯，智能推荐最适合的学习内容</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 行动号召区域 -->
+        <section class="action-cards">
+            <a href="#" class="action-card animate-up" style="opacity: 0; animation-delay: 0.1s">
+                <div class="action-icon">♟️</div>
+                <h3 class="action-title">开始对弈练习</h3>
+                <p class="action-description">与AI进行实战对局，应用所学技巧，提升实战能力</p>
+                <div class="action-meta">
+                    <span>推荐给: 所有级别</span>
+                    <span>时长: 15-30分钟</span>
+                </div>
+            </a>
+
+            <a href="#" class="action-card animate-up" style="opacity: 0; animation-delay: 0.2s">
+                <div class="action-icon">🎯</div>
+                <h3 class="action-title">战术训练挑战</h3>
+                <p class="action-description">完成每日战术挑战，赢取徽章奖励，提升战术敏锐度</p>
+                <div class="action-meta">
+                    <span>推荐给: 中级玩家</span>
+                    <span>时长: 10-20分钟</span>
+                </div>
+            </a>
+
+            <a href="#" class="action-card animate-up" style="opacity: 0; animation-delay: 0.3s">
+                <div class="action-icon">📊</div>
+                <h3 class="action-title">棋局分析复盘</h3>
+                <p class="action-description">深度分析你的对局，发现改进空间，避免重复错误</p>
+                <div class="action-meta">
+                    <span>推荐给: 进阶玩家</span>
+                    <span>时长: 20-40分钟</span>
+                </div>
+            </a>
+        </section>
+
+        <!-- 平台统计区域 -->
+        <section class="platform-section">
+            <h2 class="platform-title">加入我们的学习社区</h2>
+            <p class="platform-description">
+                与成千上万的青少年棋手一起进步，享受科学、有趣、高效的国际象棋学习体验
+            </p>
+
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-value">10K+</div>
+                    <div class="stat-label">注册学习者</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">50K+</div>
+                    <div class="stat-label">完成训练</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">满意率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">4.8★</div>
+                    <div class="stat-label">平均评分</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 交互动画
+        document.addEventListener('DOMContentLoaded', function() {
+            // 观察器动画
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const delay = entry.target.style.animationDelay || '0s';
+                        entry.target.style.animationDelay = delay;
+                        entry.target.style.opacity = '1';
+                    }
+                });
+            }, observerOptions);
+
+            // 观察所有动画元素
+            document.querySelectorAll('.animate-left, .animate-right, .animate-up').forEach(el => {
+                observer.observe(el);
+            });
+
+            // 徽章悬停效果
+            document.querySelectorAll('.badge-category').forEach(category => {
+                category.addEventListener('mouseenter', function() {
+                    const badges = this.querySelectorAll('.badge-item.unlocked');
+                    badges.forEach((badge, index) => {
+                        setTimeout(() => {
+                            badge.style.transform = 'scale(1.2)';
+                            badge.style.transition = 'transform 0.2s ease';
+                        }, index * 50);
+                    });
+                });
+
+                category.addEventListener('mouseleave', function() {
+                    const badges = this.querySelectorAll('.badge-item.unlocked');
+                    badges.forEach(badge => {
+                        badge.style.transform = 'scale(1)';
+                    });
+                });
+            });
+
+            // 学习路径进度动画
+            document.querySelectorAll('.progress-fill').forEach(progress => {
+                const width = progress.style.width;
+                progress.style.width = '0%';
+                setTimeout(() => {
+                    progress.style.width = width;
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>

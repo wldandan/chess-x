@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aaron Chess - chess.com 风格预览（登录版）</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* chess.com 官方配色 */
+      --bg-primary: #302e2b;
+      --bg-secondary: #262421;
+      --bg-tertiary: #464542;
+      --bg-card: #403e3b;
+      --chess-green: #81b64c;
+      --chess-green-dark: #6a9a3a;
+      --chess-green-light: #9bd668;
+      --text-primary: #ffffff;
+      --text-secondary: #bababa;
+      --text-muted: #7d7d7d;
+      --border-color: #464542;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========== 顶部导航栏 ========== */
+    .navbar {
+      background: var(--bg-secondary);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      font-size: 32px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 5px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.15s;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .user-info:hover {
+      background: #505050;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--chess-green), var(--chess-green-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .user-rating {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--chess-green-light);
+    }
+
+    .user-name {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== 主布局 ========== */
+    .main-layout {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .main-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sidebar {
+      width: 320px;
+      flex-shrink: 0;
+    }
+
+    /* ========== 欢迎卡片 ========== */
+    .welcome-card {
+      background: linear-gradient(135deg, var(--bg-secondary), #1a1a1a);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .welcome-content h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .welcome-content p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .welcome-streak {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(129, 182, 76, 0.15);
+      padding: 10px 16px;
+      border-radius: 20px;
+    }
+
+    .streak-icon {
+      font-size: 20px;
+    }
+
+    .streak-count {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--chess-green-light);
+    }
+
+    .streak-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== 快速对战卡片 ========== */
+    .quick-play-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .play-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .play-option {
+      background: var(--bg-tertiary);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .play-option:hover {
+      border-color: var(--chess-green);
+      background: var(--bg-card);
+    }
+
+    .play-option-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .play-option-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .play-option-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== 每日挑战 ========== */
+    .daily-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .daily-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .daily-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .daily-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--chess-green), var(--chess-green-dark));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .daily-text h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .daily-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .daily-timer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(129, 182, 76, 0.15);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--chess-green-light);
+    }
+
+    .daily-tasks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .daily-task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+    }
+
+    .task-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .task-checkbox.done {
+      background: var(--chess-green);
+    }
+
+    .task-checkbox.todo {
+      background: var(--bg-card);
+      border: 2px solid var(--text-muted);
+    }
+
+    .task-text {
+      font-size: 14px;
+      flex: 1;
+    }
+
+    .task-text.done {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-reward {
+      font-size: 12px;
+      color: var(--chess-green-light);
+      font-weight: 600;
+    }
+
+    /* ========== 推荐学习 ========== */
+    .recommended-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .recommended-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .recommended-item {
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .recommended-item:hover {
+      background: var(--bg-card);
+      transform: translateX(4px);
+    }
+
+    .recommended-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .recommended-content {
+      flex: 1;
+    }
+
+    .recommended-content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .recommended-content p {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .recommended-arrow {
+      color: var(--chess-green);
+      font-size: 18px;
+    }
+
+    /* ========== 侧边栏卡片 ========== */
+    .sidebar-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+    }
+
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 进度统计 */
+    .progress-item {
+      margin-bottom: 15px;
+    }
+
+    .progress-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .progress-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .progress-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--chess-green-light);
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--chess-green), var(--chess-green-light));
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    /* 徽章展示 */
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .badge-item {
+      aspect-ratio: 1;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+
+    .badge-item:hover {
+      transform: scale(1.05);
+      background: var(--bg-card);
+    }
+
+    .badge-item.unlocked {
+      background: linear-gradient(135deg, var(--chess-green), var(--chess-green-dark));
+    }
+
+    .badge-item.locked {
+      opacity: 0.4;
+      filter: grayscale(1);
+    }
+
+    /* 活动列表 */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--bg-tertiary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-text {
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .activity-time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* 排行榜 */
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .leaderboard-rank {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .leaderboard-rank.top1 {
+      background: #ffd700;
+      color: #1a1a1a;
+    }
+
+    .leaderboard-rank.top2 {
+      background: #c0c0c0;
+      color: #1a1a1a;
+    }
+
+    .leaderboard-rank.top3 {
+      background: #cd7f32;
+      color: white;
+    }
+
+    .leaderboard-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--chess-green), var(--chess-green-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .leaderboard-info {
+      flex: 1;
+    }
+
+    .leaderboard-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .leaderboard-score {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .main-layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+
+      .welcome-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .play-options {
+        grid-template-columns: 1fr;
+      }
+
+      .recommended-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <a href="#" class="logo">
+          <span class="logo-icon">♞</span>
+          <span>Aaron Chess</span>
+        </a>
+        <div class="nav-links">
+          <a href="#" class="nav-link active">主页</a>
+          <a href="#" class="nav-link">对局</a>
+          <a href="#" class="nav-link">战术</a>
+          <a href="#" class="nav-link">课程</a>
+          <a href="#" class="nav-link">分析</a>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="user-info">
+          <div class="user-avatar">👤</div>
+          <div>
+            <div class="user-rating">1560</div>
+            <div class="user-name">小明同学</div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-layout">
+      <div class="main-content">
+        <!-- 欢迎卡片 -->
+        <div class="welcome-card">
+          <div class="welcome-content">
+            <h2>欢迎回来，小明同学！👋</h2>
+            <p>今天是你连续学习的第 28 天，继续保持！</p>
+          </div>
+          <div class="welcome-streak">
+            <span class="streak-icon">🔥</span>
+            <div>
+              <div class="streak-count">28 天</div>
+              <div class="streak-text">连续学习</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快速对战卡片 -->
+        <div class="quick-play-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="card-title-icon">⚡</span>
+              <span>快速开始</span>
+            </h2>
+          </div>
+          <div class="play-options">
+            <div class="play-option">
+              <div class="play-option-icon">🤖</div>
+              <div class="play-option-title">对战 AI</div>
+              <div class="play-option-desc">不同难度级别</div>
+            </div>
+            <div class="play-option">
+              <div class="play-option-icon">👥</div>
+              <div class="play-option-title">在线对战</div>
+              <div class="play-option-desc">匹配真实对手</div>
+            </div>
+            <div class="play-option">
+              <div class="play-option-icon">👤</div>
+              <div class="play-option-title">好友对战</div>
+              <div class="play-option-desc">邀请好友下棋</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 每日挑战 -->
+        <div class="daily-card">
+          <div class="daily-header">
+            <div class="daily-title">
+              <div class="daily-icon">🎯</div>
+              <div class="daily-text">
+                <h3>每日挑战</h3>
+                <p>完成全部任务赢取奖励</p>
+              </div>
+            </div>
+            <div class="daily-timer">
+              <span>⏱️</span>
+              <span>12:34:56</span>
+            </div>
+          </div>
+          <div class="daily-tasks">
+            <div class="daily-task">
+              <div class="task-checkbox done">✓</div>
+              <span class="task-text done">完成 3 场对局</span>
+              <span class="task-reward">+50 XP</span>
+            </div>
+            <div class="daily-task">
+              <div class="task-checkbox done">✓</div>
+              <span class="task-text done">解决 5 个战术题</span>
+              <span class="task-reward">+30 XP</span>
+            </div>
+            <div class="daily-task">
+              <div class="task-checkbox todo">○</div>
+              <span class="task-text">分析 1 局棋</span>
+              <span class="task-reward">+20 XP</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 推荐学习 -->
+        <div class="recommended-card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="card-title-icon">📚</span>
+              <span>为你推荐</span>
+            </h2>
+          </div>
+          <div class="recommended-grid">
+            <div class="recommended-item">
+              <div class="recommended-icon">🧠</div>
+              <div class="recommended-content">
+                <h4>智能分析</h4>
+                <p>AI 深度分析你的对局</p>
+              </div>
+              <span class="recommended-arrow">→</span>
+            </div>
+            <div class="recommended-item">
+              <div class="recommended-icon">⚔️</div>
+              <div class="recommended-content">
+                <h4>战术训练</h4>
+                <p>今日战术挑战</p>
+              </div>
+              <span class="recommended-arrow">→</span>
+            </div>
+            <div class="recommended-item">
+              <div class="recommended-icon">📖</div>
+              <div class="recommended-content">
+                <h4>开局学习</h4>
+                <p>意大利开局精讲</p>
+              </div>
+              <span class="recommended-arrow">→</span>
+            </div>
+            <div class="recommended-item">
+              <div class="recommended-icon">🎮</div>
+              <div class="recommended-content">
+                <h4>残局训练</h4>
+                <p>提升残局技巧</p>
+              </div>
+              <span class="recommended-arrow">→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 侧边栏 -->
+      <aside class="sidebar">
+        <!-- 学习进度 -->
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">📊 学习进度</h3>
+          <div class="progress-item">
+            <div class="progress-header">
+              <span class="progress-label">技能掌握</span>
+              <span class="progress-value">8/12</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 65%"></div>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header">
+              <span class="progress-label">今日目标</span>
+              <span class="progress-value">2/3</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 66%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 成就徽章 -->
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">🏆 成就徽章</h3>
+          <div class="badge-grid">
+            <div class="badge-item unlocked" title="双车杀王">♞</div>
+            <div class="badge-item unlocked" title="闪击战术">♜</div>
+            <div class="badge-item unlocked" title="牵制技巧">♝</div>
+            <div class="badge-item locked" title="消除防御">♛</div>
+            <div class="badge-item unlocked" title="意大利开局">🇮🇹</div>
+            <div class="badge-item unlocked" title="西班牙开局">🇪🇸</div>
+            <div class="badge-item locked" title="法兰西防御">🇫🇷</div>
+            <div class="badge-item locked" title="西西里防御">🏴</div>
+          </div>
+        </div>
+
+        <!-- 最近活动 -->
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">📈 最近活动</h3>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon">🎉</div>
+              <div class="activity-content">
+                <div class="activity-text">击败了 AI 中级难度</div>
+                <div class="activity-time">5 分钟前</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">🏅</div>
+              <div class="activity-content">
+                <div class="activity-text">解锁"战术大师"徽章</div>
+                <div class="activity-time">1 小时前</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">📊</div>
+              <div class="activity-content">
+                <div class="activity-text">等级分提升了 20 分</div>
+                <div class="activity-time">2 小时前</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">🔥</div>
+              <div class="activity-content">
+                <div class="activity-text">完成 3 连胜</div>
+                <div class="activity-time">今天</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 排行榜 -->
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">🏅 本周排行</h3>
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank top1">1</div>
+            <div class="leaderboard-avatar">👦</div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">小棋王</div>
+              <div class="leaderboard-score">2350 分</div>
+            </div>
+          </div>
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank top2">2</div>
+            <div class="leaderboard-avatar">👧</div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">象棋公主</div>
+              <div class="leaderboard-score">2180 分</div>
+            </div>
+          </div>
+          <div class="leaderboard-item">
+            <div class="leaderboard-rank top3">3</div>
+            <div class="leaderboard-avatar">👤</div>
+            <div class="leaderboard-info">
+              <div class="leaderboard-name">小明同学</div>
+              <div class="leaderboard-score">2050 分</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
