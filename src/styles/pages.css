@@ -4370,13 +4370,13 @@
 }
 
 .chess-square.light {
-  background-color: #f0d9b5;
-  border-color: #e8c8a8;
+  background-color: #EBECD0;
+  border-color: #d9dfc0;
 }
 
 .chess-square.dark {
-  background-color: #b58863;
-  border-color: #a67b52;
+  background-color: #779556;
+  border-color: #6a844a;
 }
 
 .chess-square.selected {
